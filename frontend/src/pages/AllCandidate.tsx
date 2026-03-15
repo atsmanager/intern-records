@@ -157,25 +157,23 @@ const AllCandidate = () => {
                 <tr className="bg-cyan-600 text-white">
                   <th className="p-3">Actions</th>
                   <th className="p-3">Name</th>
+                  <th className="p-3">Email</th>
                   <th className="p-3">Phone</th>
-                  <th className="p-3">Status</th>
+                  <th className="p-3">LinkedIn Profile</th>
+                  <th className="p-3">Interview Status</th>
                   <th className="p-3">Comment</th>
-                  {/* <th className="p-3">LinkedIn Age</th> */}
                   <th className="p-3">Joining Date</th>
                   <th className="p-3">Duration</th>
                   <th className="p-3">Contact Duration</th>
-                  <th className="p-3">Email</th>
                   <th className="p-3">Offer Letter Sent</th>
                   <th className="p-3">Offer Letter Accepted</th>
                   <th className="p-3">Candidate Enrolled</th>
-                  <th className="p-3">LinkedIn Profile</th>
-                  <th className="p-3">LinkedIn URL</th>
-                  <th className="p-3">Job Board</th>
-                  <th className="p-3">JobPosted Date</th>
-                  <th className="p-3">Posted By</th>
-                  <th className="p-3">Applied Date</th>
-                  <th className="p-3">Company</th>
                   <th className="p-3">Job Title</th>
+                  <th className="p-3">Company</th>
+                  <th className="p-3">Job Board</th>
+                  <th className="p-3">Job Posted Date</th>
+                  <th className="p-3">Posted By</th>
+                  <th className="p-3">Applicant Applied Date</th>
                   <th className="p-3">Interviewed By</th>
                 </tr>
               </thead>
