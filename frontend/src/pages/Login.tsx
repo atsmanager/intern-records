@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
       );
 
       if (!roleCheck.ok) {
-        throw new Error("Failed to check role");
+        throw new Error("Enter a valid mail");
       }
 
       const data = await roleCheck.json();

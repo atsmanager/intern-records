@@ -106,7 +106,7 @@ const AllCandidate = () => {
               <label className="text-sm text-gray-600 mb-1">Search</label>
               <input
                 type="text"
-                placeholder="Name or Email"
+                placeholder="Name, Email, Company, Job Title"
                 value={search}
                 onChange={(e) => {
                   setPage(1);

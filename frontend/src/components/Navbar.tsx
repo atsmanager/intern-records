@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginStore } from "../store/authStore";
+import Logo from "../assets/logo.png";
 const Navbar = () => {
   const { user, logout } = useLoginStore();
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Navbar = () => {
     <nav className="flex w-full justify-between px-3 py-3 lg:px-10 bg-white shadow-md items-center">
       <div>
         <img
-          src="https://centennialinfotech.com/img/logo.png"
+          src={Logo}
           alt="logo"
           className=" h-18"
         />

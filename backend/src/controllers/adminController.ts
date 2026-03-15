@@ -199,7 +199,7 @@ export const updatePassword = async (req: Request, res: Response) => {
     );
     if (!update) {
       console.log("Error in db while updating password");
-      return res.status(400).json({ message: "Failed to update password" });
+      return res.status(400).json({ message: "Enter a valid email in the email field" });
     }
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (e) {

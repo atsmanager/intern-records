@@ -115,6 +115,8 @@ export const getCandidateController = async (req: Request, res: Response) => {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
       { email: { $regex: search, $options: "i" } },
+      { company: { $regex: search, $options: "i" } },
+      { jobTitle: { $regex: search, $options: "i" } },
     ];
   }
 
@@ -162,6 +164,8 @@ export const getRejectedCandidateController = async (req: Request, res: Response
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
       { email: { $regex: search, $options: "i" } },
+      { company: { $regex: search, $options: "i" } },
+      { jobTitle: { $regex: search, $options: "i" } },
     ];
   }
 
