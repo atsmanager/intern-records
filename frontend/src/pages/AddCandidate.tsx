@@ -91,13 +91,13 @@ const AddCandidate = () => {
           className="flex flex-col gap-4 w-full  max-w-xl "
         >
           <div className="flex flex-col">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded">
               Name
             </label>
             <input
               required
               type="text"
-              placeholder="enter candidate name"
+              placeholder="Enter candidate name"
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -106,13 +106,13 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col  ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded">
               Email
             </label>
             <input
               required
               type="email"
-              placeholder="enter candidate email"
+              placeholder="Enter candidate email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -125,19 +125,19 @@ const AddCandidate = () => {
           <div>
             <button
               type="button"
-              className="p-3 bg-blue-600 rounded-md text-white hover:bg-blue-500"
+              className="p-3 bg-blue-600 rounded-md cursor-pointer text-white hover:bg-blue-500"
               onClick={checkMail}
             >Verify mail</button>
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Phone
             </label>
             <input
               required
               type="tel"
-              placeholder="enter candidate phone no."
+              placeholder="Enter candidate phone no."
               name="phone"
               value={formData.phone}
               onChange={handleChange}
@@ -146,7 +146,7 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               LinkedIn URL
             </label>
             <input
@@ -160,13 +160,13 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Job board
             </label>
             <input
               required
               type="text"
-              placeholder="enter job board name"
+              placeholder="Enter job board name"
               name="jobBoard"
               value={formData.jobBoard}
               onChange={handleChange}
@@ -175,7 +175,7 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Job posted Date
             </label>
             <input
@@ -189,7 +189,7 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Applied Date
             </label>
             <input
@@ -203,7 +203,7 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Job Posted By
             </label>
             <input
@@ -218,13 +218,13 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Company
             </label>
             <input
               required
               type="text"
-              placeholder="company"
+              placeholder="Enter Company"
               name="company"
               value={formData.company}
               onChange={handleChange}
@@ -233,13 +233,13 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
               Job Title
             </label>
             <input
               required
               type="text"
-              placeholder="job title"
+              placeholder="Enter job title"
               name="jobTitle"
               value={formData.jobTitle}
               onChange={handleChange}
@@ -248,7 +248,7 @@ const AddCandidate = () => {
           </div>
 
           <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded uppercase">
+            <label className="subpixel-antialiased text-lg font-stretch-expanded">
               Interviewed by
             </label>
             <input

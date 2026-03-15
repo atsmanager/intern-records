@@ -284,6 +284,36 @@ const EditableRow = ({
         />
       </td>
 
+      <td>
+        <input
+          type="text"
+          className="border mt-3 mr-3"
+          value={editFormData.company}
+          name="company"
+          onChange={editHandleChange}
+        />
+      </td>
+
+      <td>
+        <input
+          type="text"
+          className="border mt-3 mr-3"
+          value={editFormData.jobTitle}
+          name="jobTitle"
+          onChange={editHandleChange}
+        />
+      </td>
+
+      <td>
+        <input
+          type="text"
+          className="border mt-3 mr-3"
+          value={editFormData.interviewedBy}
+          name="interviewedBy"
+          onChange={editHandleChange}
+        />
+      </td>
+
       {/* <td>
         <input
           type="text"

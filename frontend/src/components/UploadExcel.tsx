@@ -35,7 +35,7 @@ const UploadExcel = () => {
   };
   return (
     <div className="pt-4 flex gap-3 flex-col">
-      <h2 className="text-lg font-bold py-4">Import Data by Excel</h2>
+      <h2 className="text-2xl font-bold text-center">Import Data by Excel</h2>
 
       <form
         onSubmit={handleFileSubmit}
