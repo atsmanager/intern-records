@@ -48,7 +48,6 @@ const AddCandidate = () => {
     try {
       const data = await candidateAddApi(formData);
       alert(data.message);
-
       navigate("/all-candidate");
     } catch (error: any) {
       alert(error.response?.data?.error);
@@ -209,7 +208,7 @@ const AddCandidate = () => {
             <input
               required
               type="text"
-              placeholder="posted by"
+              placeholder="Posted by"
               name="jobPostedBy"
               value={formData.jobPostedBy}
               onChange={handleChange}
@@ -254,7 +253,7 @@ const AddCandidate = () => {
             <input
               required
               type="text"
-              placeholder="interviewed by"
+              placeholder="Interviewed by"
               name="interviewedBy"
               value={formData.interviewedBy}
               onChange={handleChange}
