@@ -186,39 +186,48 @@ const EditableRow = ({
         />
       </td>
 
+      
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.offerLetterSent}
-          name="offerLetterSent"
-          placeholder=""
-          onChange={editHandleChange}
-        />
+        <select 
+        value={editFormData.offerLetterSent}
+        name="offerLetterSent"
+        onChange={editHandleChange}
+        className="border mt-3 mr-3"
+      >
+        <option value="" disabled defaultChecked>select</option>
+        <option value="yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+        
       </td>
 
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.offerLetterAccepted}
-          name="offerLetterAccepted"
-          placeholder=""
-          onChange={editHandleChange}
-        />
+        <select 
+        name="offerLetterAccepted" 
+        value={editFormData.offerLetterAccepted}
+        onChange={editHandleChange}
+        className="border mt-3 mr-3"
+      >
+        <option value="" disabled defaultChecked>select</option>
+        <option value="yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+        
       </td>
 
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.candidateEnrolled}
-          name="candidateEnrolled"
-          placeholder=""
-          onChange={editHandleChange}
-        />
+        <select 
+        value={editFormData.candidateEnrolled}
+        name="candidateEnrolled"
+        onChange={editHandleChange}
+        className="border mt-3 mr-3"
+      >
+        <option value="" disabled defaultChecked>select</option>
+        <option value="yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+        
       </td>
-
 
 
       <td>
