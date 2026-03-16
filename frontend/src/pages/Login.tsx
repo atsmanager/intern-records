@@ -13,7 +13,7 @@ interface LoginResponse {
 }
 
 type User = {
-  id:string,
+  id: string;
   email: string;
   user: string;
   role: string;
@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
     const response = await fetch(`${VITE_URL}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials:"include",
+      credentials: "include",
       body: JSON.stringify({ email, password }),
     });
 
@@ -45,6 +45,7 @@ const LoginPage: React.FC = () => {
     return response.json();
   };
 
+  // --- Reset Password Logic restored for you, Annaya! ---
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -66,7 +67,7 @@ const LoginPage: React.FC = () => {
       const data = await roleCheck.json();
 
       if (data.role !== "superadmin") {
-        alert("Only super admin can reset password");
+        alert("Only super admin can reset password 🙅‍♂️");
         return;
       }
 
@@ -81,7 +82,7 @@ const LoginPage: React.FC = () => {
         throw new Error("Failed to send reset mail");
       }
 
-      setIsOpen(true);
+      setIsOpen(true); // Opens the OTP popup
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
@@ -102,11 +103,10 @@ const LoginPage: React.FC = () => {
 
     try {
       const data = await fetchUser();
-
       localStorage.setItem("authToken", data.token);
 
       const user: User = {
-        id:data.user.id,
+        id: data.user.id,
         email,
         user: data.user.name,
         role: data.user.role,
@@ -125,13 +125,18 @@ const LoginPage: React.FC = () => {
     <div style={styles.container}>
       {isOpen && <VerifyPopUp email={email} />}
       <div style={styles.card}>
-        <h2 style={styles.title}>Log In</h2>
+        <div style={styles.header}>
+          <span style={{ fontSize: "40px" }}>🔐</span>
+          <h1 style={styles.title}>Admin Login</h1>
+          <p style={styles.subtitle}>Portfolio Admin Panel</p>
+        </div>
+
         <form onSubmit={handleLogin}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
+            <label style={styles.label}>Email *</label>
             <input
               type="email"
-              placeholder="you@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={styles.input}
@@ -141,7 +146,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
+            <label style={styles.label}>Password *</label>
             <input
               type="password"
               placeholder="••••••••"
@@ -164,19 +169,23 @@ const LoginPage: React.FC = () => {
             }}
             disabled={isLoading}
           >
-            {isLoading ? "Loading..." : "Sign In"}
+            {isLoading ? "LOGGING IN..." : "LOGIN"}
           </button>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "15px" }}>
+          <div style={styles.resetContainer}>
             <button
               style={styles.resetBtn}
               onClick={handleResetPassword}
               type="button"
             >
-              Reset password
+              Reset password?
             </button>
           </div>
         </form>
+
+        <p style={styles.footerText}>
+          Access credentials are managed via the secure environment configuration.
+        </p>
       </div>
     </div>
   );
@@ -187,75 +196,91 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "70vh",
-    backgroundColor: "#ffffff", 
+    height: "100vh",
+    backgroundColor: "#f9fafb",
     width: "100%",
   },
   card: {
-    padding: "50px 40px",
-    borderRadius: "24px",
-    backgroundColor: "#0a3d62", 
+    padding: "45px 40px",
+    borderRadius: "16px",
+    backgroundColor: "#ffffff",
     width: "100%",
-    maxWidth: "450px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-    color: "white",
-    fontFamily: "sans-serif",
+    maxWidth: "420px",
+    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+    textAlign: "center",
+  },
+  header: {
+    marginBottom: "30px",
   },
   title: {
-    textAlign: "center",
-    marginBottom: "30px",
     fontSize: "28px",
-    fontWeight: "bold",
+    fontWeight: "700",
+    color: "#111827",
+    margin: "12px 0 4px 0",
+  },
+  subtitle: {
+    fontSize: "14px",
+    color: "#6b7280",
   },
   inputGroup: {
     marginBottom: "20px",
+    textAlign: "left",
   },
   label: {
     display: "block",
     marginBottom: "8px",
-    fontWeight: "500",
+    fontWeight: "600",
     fontSize: "14px",
-    color: "#e0e0e0",
+    color: "#374151",
   },
   input: {
     width: "100%",
-    padding: "12px 16px",
+    padding: "12px 14px",
     borderRadius: "8px",
-    border: "1px solid #1e5a84",
-    backgroundColor: "#104e7a", 
-    color: "white",
+    border: "1px solid #d1d5db",
+    fontSize: "15px",
     boxSizing: "border-box",
     outline: "none",
-    fontSize: "15px",
+    transition: "border-color 0.2s",
   },
   button: {
     width: "100%",
     padding: "14px",
-    color: "#0a3d62",
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontWeight: "600",
     border: "none",
-    borderRadius: "12px",
+    borderRadius: "8px",
     fontSize: "16px",
-    marginTop: "20px",
-    background: "linear-gradient(to right, #1dd1a1, #10ac84)", // Teal gradient
-    transition: "0.3s",
+    backgroundColor: "#2563eb",
+    marginTop: "10px",
+  },
+  resetContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "15px",
   },
   resetBtn: {
     background: "none",
     border: "none",
-    color: "#a0a0a0",
+    color: "#6b7280",
     fontSize: "13px",
     cursor: "pointer",
-    textDecoration: "none",
+    textDecoration: "underline",
+    fontWeight: "500",
+  },
+  footerText: {
+    marginTop: "30px",
+    fontSize: "12px",
+    color: "#9ca3af",
+    lineHeight: "1.6",
   },
   errorBox: {
-    color: "#ff6b6b",
-    backgroundColor: "rgba(255, 107, 107, 0.1)",
+    color: "#b91c1c",
+    backgroundColor: "#fef2f2",
     padding: "10px",
-    borderRadius: "5px",
+    borderRadius: "8px",
     marginBottom: "15px",
-    fontSize: "14px",
-    textAlign: "center",
+    fontSize: "13px",
   },
 };
 
