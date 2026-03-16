@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLoginStore } from "../store/authStore";
 import AddCandidate from "../pages/AddCandidate";
@@ -6,15 +6,19 @@ import AllCandidate from "../pages/AllCandidate";
 import LoginPage from "../pages/Login";
 import CreateUser from "../pages/CreateUser";
 import ResetPassword from "../pages/UpdatePassword";
-import UpdatePassword from "../pages/UpdatePassword";
 import AllUsers from "../pages/AllUsers";
 import RejectedCandidates from "../pages/RejectedCandidates";
 import Loading from "../components/Loading";
 
 
 const VITE_API_URL = import.meta.env.VITE_API_URL
+
+// Routes that should be accessible without authentication
+const PUBLIC_ROUTES = ["/reset-password"];
+
 const AppRoute = () => {
   const { user, login } = useLoginStore();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
 
@@ -31,10 +35,12 @@ const AppRoute = () => {
       .finally(() => setLoading(false));
   }, [login]);
 
-  if (user === null) return <LoginPage />
+  // Allow public routes (like reset-password) without authentication
+  const isPublicRoute = PUBLIC_ROUTES.includes(location.pathname);
 
+  if (!isPublicRoute && user === null) return <LoginPage />
 
-  if (loading) return <Loading />
+  if (loading && !isPublicRoute) return <Loading />
   return (
     <Routes>
       <Route path="/" element={user === null ? <LoginPage /> : <AllCandidate />} />
@@ -42,7 +48,6 @@ const AppRoute = () => {
       <Route path="/all-candidate" element={<AllCandidate />}></Route>
       <Route path="/create-user" element={<CreateUser />}></Route>
       <Route path="/reset-password" element={<ResetPassword />}></Route>
-      <Route path="/update-password" element={<UpdatePassword />}></Route>
       <Route path="/all-users" element={<AllUsers />}></Route>
       <Route
         path="/rejected-candidates"

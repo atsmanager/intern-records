@@ -211,13 +211,17 @@ export const updatePassword = async (req: Request, res: Response) => {
 export const checkRole = async (req: Request, res: Response) => {
   try {
     const email = req.query.email as string;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
     const user = await Admin.findOne({ email });
     if (user) {
       return res.status(200).json({ role: user.role });
     }
-    res.status(404).json({ message: "user not found" });
+    return res.status(404).json({ message: "user not found" });
   } catch (e) {
-    console.log(e);
+    console.log("Error in checkRole:", e);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

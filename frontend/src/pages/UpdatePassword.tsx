@@ -1,46 +1,42 @@
 import { useState } from "react";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const VITE_API_URL = import.meta.env.VITE_API_URL
 const UpdatePassword = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [email,setEmail] = useState<string>(location.state? location.state.email:"");
-    const [password,setPassword] = useState<string>('');
-    const [confirmPassword,setConfirmPassword] = useState<string>('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>(location.state ? location.state.email : "");
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
-    const HandleUpdatePassword  = async (e:React.FormEvent) => {
-        e.preventDefault();
+  const HandleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        if(password.length===0){
-            alert('Enter a valid password');
-            return;
-        }
-        if(confirmPassword !== password){
-            alert('Password does not match');
-            return;
-        }
-        const response = await fetch(`${VITE_API_URL}/admin/update-password`,{
-                method:'POST',
-                headers:{
-                    "Content-Type":"application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({email,password})
-            }
-        );
-
-        if(response.ok){
-            alert("updated passwords successfully")
-            navigate('/')
-        }
-
-        
-
-
+    if (password.length === 0) {
+      alert('Enter a valid password');
+      return;
     }
-    return (
-        <div style={styles.container}>
-      
+    if (confirmPassword !== password) {
+      alert('Password does not match');
+      return;
+    }
+    const response = await fetch(`${VITE_API_URL}/admin/update-password`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ email, password })
+    }
+    );
+
+    if (response.ok) {
+      alert("updated passwords successfully")
+      navigate('/')
+    }
+  }
+  return (
+    <div style={styles.container}>
+
       <div style={styles.card}>
         <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Update password</h2>
         <form >
@@ -51,7 +47,7 @@ const UpdatePassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={styles.input}
-              
+
               required
             />
           </div>
@@ -62,7 +58,7 @@ const UpdatePassword = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={styles.input}
-              
+
               required
             />
           </div>
@@ -74,20 +70,20 @@ const UpdatePassword = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               style={styles.input}
-              
+
               required
             />
           </div>
-            <button 
-            type="submit" 
+          <button
+            type="submit"
             style={{
               ...styles.button,
-              backgroundColor:  '#007bff',
-              cursor:  'pointer'
+              backgroundColor: '#007bff',
+              cursor: 'pointer'
             }}
 
             onClick={HandleUpdatePassword}
-            
+
           >
             Update Password
           </button>
@@ -103,7 +99,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-    width:'50vw',
+    width: '50vw',
     backgroundColor: '#f0f2f5',
     borderRadius: '10px',
   },
