@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginStore } from "../store/authStore";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/Logo.jpeg";
 const Navbar = () => {
   const { user, logout } = useLoginStore();
   const navigate = useNavigate();

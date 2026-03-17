@@ -128,7 +128,7 @@ const LoginPage: React.FC = () => {
           <span style={styles.icon}>🔐</span>
           <h1 style={styles.title}>Admin Login</h1>
         </div>
-        <p style={styles.subtitle}>Portfolio Admin Panel</p>
+        <p style={styles.subtitle}>ATS Admin Panel</p>
 
         <form onSubmit={handleLogin}>
           <div style={styles.inputGroup}>
