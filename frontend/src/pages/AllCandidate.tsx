@@ -200,7 +200,7 @@ const AllCandidate = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="text-center p-3 text-gray-500">
+                    <td colSpan={20} className="text-center p-3 text-gray-500">
                       No candidates found
                     </td>
                   </tr>

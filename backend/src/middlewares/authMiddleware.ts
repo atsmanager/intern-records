@@ -19,7 +19,7 @@ const verifyToken = (
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET_KEY!
+      (process.env.JWT_SECRET_KEY || process.env.JWT_SECRET)!
     ) as TokenPayload;
 
     req.user = decoded.id;
