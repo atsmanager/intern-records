@@ -11,7 +11,7 @@ import RejectedCandidates from "../pages/RejectedCandidates";
 import Loading from "../components/Loading";
 
 
-const VITE_API_URL = import.meta.env.VITE_API_URL
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 // Routes that should be accessible without authentication
 const PUBLIC_ROUTES = ["/reset-password"];

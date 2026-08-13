@@ -7,7 +7,7 @@ interface User {
   name: string;
   email: string;
 }
-const VITE_API_URL = import.meta.env.VITE_API_URL
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 const UserTable: React.FC = () => {
     const navigate = useNavigate();

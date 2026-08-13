@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { StoreApi } from 'zustand'
 
-const VITE_API_URL = import.meta.env.VITE_API_URL
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 type User = {
     id: string,

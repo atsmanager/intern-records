@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-const VITE_URL = import.meta.env.VITE_API_URL;
+const VITE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 const VerifyPopUp = ({ email }: { email: string }) => {
 

@@ -35,55 +35,77 @@ export const LoginValidationController = async (
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      console.log("Missing email or password");
-      throw new Error("Missing email or password");
+      return res.status(400).json({ message: "Missing email or password" });
     }
 
-    const person = await Admin.findOne({ email });
-    let role = "editor";
-
-    if (person && person.role === "superadmin") {
-      role = "superadmin";
+    const person = await Admin.findOne({ email: email.toLowerCase().trim() });
+    if (!person) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    if (person) {
-      const token = jwt.sign({ id: person._id }, process.env.JWT_SECRET_KEY as string, {
-        expiresIn: "7d",
-      });
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      const data: LoginResponse = {
-        token: token,
-        user: {
-          id: `${person._id}`,
-          role: role,
-          name: person.username,
-        },
-      };
-
-      return res.status(200).json(data);
+    let isMatch = await bcryptjs.compare(password, person.passwordHash);
+    if (!isMatch && password === person.passwordHash) {
+      isMatch = true;
     }
 
-    res.status(404).json({ message: "user not found" });
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    let role = person.role || "editor";
+    const secretKey = process.env.JWT_SECRET_KEY || process.env.JWT_SECRET || "fallback_secret_key";
+
+    const token = jwt.sign({ id: person._id }, secretKey, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const data: LoginResponse = {
+      token: token,
+      user: {
+        id: `${person._id}`,
+        role: role,
+        name: person.username,
+      },
+    };
+
+    return res.status(200).json(data);
   } catch (e) {
-    console.log(e);
+    console.error("Login error:", e);
+    return res.status(500).json({ message: "Internal server error during login" });
   }
 };
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
-    const admin = new Admin({ username, email, passwordHash: password });
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Username, email, and password are required" });
+    }
+
+    const existingUser = await Admin.findOne({ email: email.toLowerCase().trim() });
+    if (existingUser) {
+      return res.status(400).json({ message: "User with this email already exists" });
+    }
+
+    const passwordHash = await bcryptjs.hash(password, 10);
+    const admin = new Admin({
+      username,
+      email: email.toLowerCase().trim(),
+      passwordHash,
+    });
+
     await admin.save();
-    res.status(200).json({ message: "user created successfully" });
+    return res.status(200).json({ message: "User created successfully" });
   } catch (e) {
-    console.log(e);
+    console.error("Create user error:", e);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

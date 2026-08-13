@@ -4,7 +4,7 @@ import { candidateAddApi } from "../api/candidateApi";
 import { useNavigate } from "react-router-dom";
 import UploadExcel from "../components/UploadExcel";
 
-const VITE_API_URL = import.meta.env.VITE_API_URL
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 const AddCandidate = () => {
   const [formData, setFormData] = useState<CandidateFormData>({
     name: "",
