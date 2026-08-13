@@ -23,8 +23,10 @@ const AppRoute = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
     fetch(`${VITE_API_URL}/auth/me`, {
       credentials: "include",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then((res) => {
         if (!res.ok) throw new Error("Not logged in");
@@ -38,9 +40,12 @@ const AppRoute = () => {
   // Allow public routes (like reset-password) without authentication
   const isPublicRoute = PUBLIC_ROUTES.includes(location.pathname);
 
-  if (!isPublicRoute && user === null) return <LoginPage />
+  // Show loader while session check is in progress — MUST come before user===null check
+  if (loading && !isPublicRoute) return <Loading />;
 
-  if (loading && !isPublicRoute) return <Loading />
+  // If session check complete and still no user, show login
+  if (!isPublicRoute && user === null) return <LoginPage />;
+
   return (
     <Routes>
       <Route path="/" element={user === null ? <LoginPage /> : <AllCandidate />} />

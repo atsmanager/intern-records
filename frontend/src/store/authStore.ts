@@ -22,6 +22,7 @@ const logout = async (set: StoreApi<LoginStore>['setState']) => {
             credentials: "include"
         })
         if (response.status === 200) {
+            localStorage.removeItem("authToken");
             set({ user: null })
         }
         const res = await response.json()

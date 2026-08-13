@@ -10,7 +10,12 @@ const verifyToken = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.token;
+  // Try cookie first, fall back to Authorization: Bearer <token> header
+  const token =
+    req.cookies.token ||
+    (req.headers.authorization?.startsWith("Bearer ")
+      ? req.headers.authorization.split(" ")[1]
+      : null);
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
