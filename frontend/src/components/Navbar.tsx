@@ -14,13 +14,20 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-inner">
-        {/* Logo */}
-        <Link to="/" className="navbar-logo" style={{ textDecoration: "none" }}>
+        <Link to="/" className="navbar-logo" style={{ textDecoration: "none", flexDirection: "row", alignItems: "center", gap: "12px" }}>
           <img
             src={Logo}
             alt="Centennial Infotech"
-            style={{ height: "48px", borderRadius: "8px" }}
+            style={{ height: "70px", borderRadius: "8px" }}
           />
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div className="navbar-logo-name">
+              <span>Applicants</span><span>Records</span>
+            </div>
+            <div className="navbar-logo-sub">
+              Manage your candidates easily
+            </div>
+          </div>
         </Link>
 
         {/* Nav links */}
