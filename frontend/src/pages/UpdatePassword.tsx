@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+
 const UpdatePassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -10,81 +12,54 @@ const UpdatePassword = () => {
 
   const HandleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length === 0) { alert('Enter a valid password'); return; }
+    if (confirmPassword !== password) { alert('Password does not match'); return; }
 
-    if (password.length === 0) {
-      alert('Enter a valid password');
-      return;
-    }
-    if (confirmPassword !== password) {
-      alert('Password does not match');
-      return;
-    }
     const response = await fetch(`${VITE_API_URL}/admin/update-password`, {
       method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, password })
-    }
-    );
+      body: JSON.stringify({ email, password }),
+    });
 
     if (response.ok) {
-      alert("updated passwords successfully")
-      navigate('/')
+      alert("Updated password successfully");
+      navigate('/');
     }
-  }
+  };
+
   return (
-    <div style={styles.container}>
+    <div className="register-container">
+      <div className="auth-card">
+        <h2 className="auth-title">Update Password</h2>
+        <p className="auth-subtitle">Change a user's password below</p>
 
-      <div style={styles.card}>
-        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Update password</h2>
-        <form >
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={styles.input}
-
-              required
-            />
-          </div>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
-
-              required
-            />
-          </div>
-
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Confirm Password</label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              style={styles.input}
-
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            style={{
-              ...styles.button,
-              backgroundColor: '#007bff',
-              cursor: 'pointer'
-            }}
-
-            onClick={HandleUpdatePassword}
-
-          >
+        <form className="auth-form" onSubmit={HandleUpdatePassword}>
+          <input
+            type="email"
+            className="auth-input"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            className="auth-input"
+            placeholder="New password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            className="auth-input"
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="btn-auth-primary">
             Update Password
           </button>
         </form>
@@ -93,58 +68,4 @@ const UpdatePassword = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    width: '50vw',
-    backgroundColor: '#f0f2f5',
-    borderRadius: '10px',
-  },
-  card: {
-    padding: '40px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-    backgroundColor: 'white',
-    width: '100%',
-    maxWidth: '400px',
-  },
-  inputGroup: {
-    marginBottom: '15px',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '5px',
-    fontWeight: 'bold',
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    boxSizing: 'border-box',
-  },
-  button: {
-    width: '100%',
-    padding: '12px',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '16px',
-    marginTop: '10px',
-  },
-  errorBox: {
-    color: '#d9534f',
-    backgroundColor: '#fdeded',
-    padding: '10px',
-    borderRadius: '5px',
-    marginBottom: '15px',
-    fontSize: '14px',
-    textAlign: 'center',
-  }
-};
-
-
-export default UpdatePassword
+export default UpdatePassword;

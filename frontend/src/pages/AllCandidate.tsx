@@ -22,7 +22,6 @@ const AllCandidate = () => {
     search: "",
   });
   const [editCandidateId, setEditCandidateId] = useState<string | null>(null);
-
   const [loading, setLoading] = useState<boolean>(true);
 
   const totalPages =
@@ -34,10 +33,8 @@ const AllCandidate = () => {
     const fetchCandidate = async (): Promise<void> => {
       try {
         const data = await candidateGetApi(page, limit, search, jobPostedFrom);
-
         const candidates = data?.candidate || [];
         const pagination = data?.pagination || {};
-
         setCandidates(candidates);
         setPagination((prev) => ({
           ...prev,
@@ -60,11 +57,7 @@ const AllCandidate = () => {
     try {
       const data = await candidateDeleteApi(id);
       alert(data.message);
-
-      const newCandidates = candidates.filter(
-        (candidate) => candidate._id != id,
-      );
-      setCandidates(newCandidates);
+      setCandidates(candidates.filter((c) => c._id !== id));
     } catch (error: any) {
       alert(error.response?.data?.error);
     }
@@ -76,163 +69,120 @@ const AllCandidate = () => {
 
   const handleCandidateUpdate = (updateCandidate: Candidate): void => {
     setCandidates((prev) =>
-      prev.map((candidat) =>
-        candidat._id === updateCandidate._id ? updateCandidate : candidat,
-      ),
+      prev.map((c) => (c._id === updateCandidate._id ? updateCandidate : c))
     );
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
   return (
-    <div className="w-full h-screen flex flex-col items-center px-4 ">
-      <div className="p-4 overflow-x-auto w-full  bg-white shadow-lg rounded-lg  flex flex-col my-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-          <div className="flex gap-5 items-center">
-            <h2 className="text-xl font-semibold text-gray-800">
-              All Candidates
-            </h2>
-            <Link to="/rejected-candidates">
-              <button className="bg-blue-500 text-white p-3 rounded-xl  font-semibold hover:bg-blue-400">
-                Rejected Candidates
+    <div className="app-page">
+      <div className="app-page-inner">
+        <div className="panel">
+          {/* Header */}
+          <div className="panel-header">
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <h2 className="panel-title">All Candidates</h2>
+              <Link to="/rejected-candidates">
+                <button className="btn-nav-outline">Rejected Candidates</button>
+              </Link>
+            </div>
+            <div className="filter-bar">
+              <div className="filter-group">
+                <span className="filter-label">Search</span>
+                <input
+                  type="text"
+                  className="filter-input"
+                  placeholder="Name, Email, Company, Job Title"
+                  value={search}
+                  onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+                />
+              </div>
+              <div className="filter-group">
+                <span className="filter-label">Job Posted</span>
+                <input
+                  type="date"
+                  className="filter-input"
+                  value={jobPostedFrom}
+                  onChange={(e) => { setPage(1); setJobPostedFrom(e.target.value); }}
+                />
+              </div>
+              <button
+                className="btn-reset"
+                onClick={() => { setSearch(""); setJobPostedFrom(""); setPage(1); }}
+              >
+                Reset
               </button>
-            </Link>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            {/* Search */}
-            <div className="flex flex-col">
-              <label className="text-sm text-gray-600 mb-1">Search</label>
-              <input
-                type="text"
-                placeholder="Name, Email, Company, Job Title"
-                value={search}
-                onChange={(e) => {
-                  setPage(1);
-                  setSearch(e.target.value);
-                }}
-                className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-              />
             </div>
-
-            {/* From Date */}
-            <div className="flex flex-col">
-              <label className="text-sm text-gray-600 mb-1">Job Posted</label>
-              <input
-                type="date"
-                value={jobPostedFrom}
-                onChange={(e) => {
-                  setPage(1);
-                  setJobPostedFrom(e.target.value);
-                }}
-                className="px-3 py-2 border rounded-lg"
-              />
-            </div>
-
-            {/* Reset */}
-            <button
-              onClick={() => {
-                setSearch("");
-                setJobPostedFrom("");
-                // setJobPostedTo("");
-                setPage(1);
-              }}
-              className="h-10.5 px-4 bg-gray-100 border rounded-lg text-sm hover:bg-gray-200"
-            >
-              Reset
-            </button>
           </div>
-        </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-lg">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-cyan-600 text-white">
-                  <th className="p-3">Actions</th>
-                  <th className="p-3">Name</th>
-                  <th className="p-3">Email</th>
-                  <th className="p-3">Phone</th>
-                  <th className="p-3">LinkedIn Profile</th>
-                  <th className="p-3">Interview Status</th>
-                  <th className="p-3">Comment</th>
-                  <th className="p-3">Joining Date</th>
-                  <th className="p-3">Duration</th>
-                  <th className="p-3">Contact Duration</th>
-                  <th className="p-3">Offer Letter Sent</th>
-                  <th className="p-3">Offer Letter Accepted</th>
-                  <th className="p-3">Candidate Enrolled</th>
-                  <th className="p-3">Job Title</th>
-                  <th className="p-3">Company</th>
-                  <th className="p-3">Job Board</th>
-                  <th className="p-3">Job Posted Date</th>
-                  <th className="p-3">Posted By</th>
-                  <th className="p-3">Applicant Applied Date</th>
-                  <th className="p-3">Interviewed By</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {candidates?.length > 0 ? (
-                  candidates.map((candidate) => (
-                    <React.Fragment key={candidate._id}>
-                      {editCandidateId === candidate._id ? (
-                        <EditableRow
-                          candidat={candidate}
-                          setEditCandidateId={setEditCandidateId}
-                          onUpdate={handleCandidateUpdate}
-                        ></EditableRow>
-                      ) : (
-                        <ReadOnlyRow
-                          key={candidate._id}
-                          candidate={candidate}
-                          onDelete={handleDelete}
-                          onEdit={handleEditClick}
-                        ></ReadOnlyRow>
-                      )}
-                    </React.Fragment>
-                  ))
-                ) : (
+          {/* Table */}
+          <div className="data-table-wrap">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <table className="data-table">
+                <thead>
                   <tr>
-                    <td colSpan={20} className="text-center p-3 text-gray-500">
-                      No candidates found
-                    </td>
+                    <th>Actions</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>LinkedIn Profile</th>
+                    <th>Interview Status</th>
+                    <th>Comment</th>
+                    <th>Joining Date</th>
+                    <th>Duration</th>
+                    <th>Contact Duration</th>
+                    <th>Offer Letter Sent</th>
+                    <th>Offer Letter Accepted</th>
+                    <th>Candidate Enrolled</th>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Job Board</th>
+                    <th>Job Posted Date</th>
+                    <th>Posted By</th>
+                    <th>Applicant Applied Date</th>
+                    <th>Interviewed By</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </form>
-        </div>
+                </thead>
+                <tbody>
+                  {candidates?.length > 0 ? (
+                    candidates.map((candidate) => (
+                      <React.Fragment key={candidate._id}>
+                        {editCandidateId === candidate._id ? (
+                          <EditableRow
+                            candidat={candidate}
+                            setEditCandidateId={setEditCandidateId}
+                            onUpdate={handleCandidateUpdate}
+                          />
+                        ) : (
+                          <ReadOnlyRow
+                            key={candidate._id}
+                            candidate={candidate}
+                            onDelete={handleDelete}
+                            onEdit={handleEditClick}
+                          />
+                        )}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={20} style={{ textAlign: "center", padding: "48px", color: "#ffffff" }}>
+                        No candidates found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </form>
+          </div>
 
-        {/* Pagination */}
-
-        <div className="w-full mt-4 flex justify-center">
-          <div className="flex border rounded-lg overflow-hidden">
-            <button
-              className="px-4 py-2 bg-gray-200 disabled:opacity-50 border-r"
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              «
-            </button>
-
-            <button className="px-4 py-2 bg-gray-100 text-sm font-medium">
-              Page {page} of {totalPages}
-            </button>
-
-            <button
-              className="px-4 py-2 bg-gray-200 disabled:opacity-50 border-l"
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              »
-            </button>
+          {/* Pagination */}
+          <div style={{ padding: "16px 24px" }}>
+            <div className="pagination">
+              <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>«</button>
+              <span className="page-info">Page {page} of {totalPages}</span>
+              <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>»</button>
+            </div>
           </div>
         </div>
       </div>

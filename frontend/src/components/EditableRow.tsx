@@ -7,11 +7,8 @@ interface EditableRowProp {
   setEditCandidateId: React.Dispatch<React.SetStateAction<string | null>>;
   onUpdate: (candidate: Candidate) => void;
 }
-const EditableRow = ({
-  candidat,
-  setEditCandidateId,
-  onUpdate,
-}: EditableRowProp) => {
+
+const EditableRow = ({ candidat, setEditCandidateId, onUpdate }: EditableRowProp) => {
   const [editFormData, setEditFormData] = useState<CandidateFormData>({
     name: candidat.name,
     email: candidat.email,
@@ -35,23 +32,18 @@ const EditableRow = ({
     jobTitle: candidat.jobTitle ?? "",
     interviewedBy: candidat.interviewedBy ?? "",
   });
+
   const editHandleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setEditFormData((prev) => ({
-      ...prev,
-      [name as keyof typeof prev]: value,
-    }));
+    setEditFormData((prev) => ({ ...prev, [name as keyof typeof prev]: value }));
   };
 
   const handleEditSave = async () => {
     try {
       const data = await candidateEditApi(candidat._id, editFormData);
       alert(data.message);
-
       onUpdate(data.updateCandidate);
       setEditCandidateId(null);
     } catch (error: any) {
@@ -59,71 +51,38 @@ const EditableRow = ({
     }
   };
 
-  const handleEditCancel = () => {
-    setEditCandidateId(null);
-  };
+  const handleEditCancel = () => setEditCandidateId(null);
 
   return (
-    <tr key={candidat._id}>
-      <td className="p-3">
-        <div className="flex gap-3 justify-around">
-          <button
-            className="px-3 py-2 bg-blue-500 rounded-lg hover:cursor-pointer hover:bg-blue-400"
-            onClick={handleEditSave}
-            type="submit"
-          >
+    <tr key={candidat._id} style={{ background: "rgba(155,89,247,0.05)" }}>
+      <td>
+        <div className="tbl-actions">
+          <button className="btn-tbl-save" onClick={handleEditSave} type="button">
             Save
           </button>
-          <button
-            className="px-3 py-2 bg-yellow-500 rounded-lg hover:cursor-pointer hover:bg-yellow-400"
-            onClick={handleEditCancel}
-          >
+          <button className="btn-tbl-cancel" onClick={handleEditCancel} type="button">
             Cancel
           </button>
         </div>
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.name}
-          name="name"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.name} name="name" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="email"
-          className="border mt-3 mr-3"
-          value={editFormData.email}
-          name="email"
-          onChange={editHandleChange}
-        />
+        <input type="email" value={editFormData.email} name="email" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="tel"
-          className="border mt-3 mr-3"
-          value={editFormData.phone}
-          name="phone"
-          onChange={editHandleChange}
-        />
+        <input type="tel" value={editFormData.phone} name="phone" onChange={editHandleChange} />
       </td>
       <td>
-        <div className="flex flex-col gap-1">
-          <select
-            name="linkedInProfile"
-            value={editFormData?.linkedInProfile || ""}
-            onChange={editHandleChange}
-            className="border mt-3 mr-3 rounded"
-          >
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <select name="linkedInProfile" value={editFormData?.linkedInProfile || ""} onChange={editHandleChange}>
             <option value="">Has Profile?</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
           <input
             type="text"
-            className="border mr-3 text-sm placeholder:text-gray-400"
             placeholder="LinkedIn URL"
             value={editFormData.linkedinURL}
             name="linkedinURL"
@@ -132,12 +91,7 @@ const EditableRow = ({
         </div>
       </td>
       <td>
-        <select
-          name="status"
-          value={editFormData?.status || ""}
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
+        <select name="status" value={editFormData?.status || ""} onChange={editHandleChange}>
           <option value="">Select Status</option>
           <option value="interested">Interested</option>
           <option value="busy">Busy</option>
@@ -147,29 +101,13 @@ const EditableRow = ({
         </select>
       </td>
       <td>
-        <textarea
-          className="border mt-3 mr-3 h-10 w-32"
-          value={editFormData.comment}
-          name="comment"
-          onChange={editHandleChange}
-        />
+        <textarea value={editFormData.comment} name="comment" onChange={editHandleChange} style={{ height: "60px", width: "120px" }} />
       </td>
       <td>
-        <input
-          type="date"
-          className="border mt-3 mr-3"
-          value={editFormData?.joiningDate?.slice(0, 10)}
-          name="joiningDate"
-          onChange={editHandleChange}
-        />
+        <input type="date" value={editFormData?.joiningDate?.slice(0, 10)} name="joiningDate" onChange={editHandleChange} />
       </td>
       <td>
-        <select
-          name="duration"
-          value={editFormData?.duration || ""}
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
+        <select name="duration" value={editFormData?.duration || ""} onChange={editHandleChange}>
           <option value="">Select</option>
           <option value="1 month">1 month</option>
           <option value="2 months">2 months</option>
@@ -180,115 +118,53 @@ const EditableRow = ({
         </select>
       </td>
       <td>
-        <select
-          name="fieldType"
-          value={editFormData?.fieldType || ""}
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
+        <select name="fieldType" value={editFormData?.fieldType || ""} onChange={editHandleChange}>
           <option value="">Select</option>
           <option value="Part Time">Part Time</option>
           <option value="Full Time">Full Time</option>
         </select>
       </td>
       <td>
-        <select 
-          value={editFormData.offerLetterSent}
-          name="offerLetterSent"
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
-          <option value="" disabled defaultChecked>Select</option>
+        <select value={editFormData.offerLetterSent} name="offerLetterSent" onChange={editHandleChange}>
+          <option value="" disabled>Select</option>
           <option value="yes">Yes</option>
           <option value="No">No</option>
         </select>
       </td>
       <td>
-        <select 
-          name="offerLetterAccepted" 
-          value={editFormData.offerLetterAccepted}
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
-          <option value="" disabled defaultChecked>Select</option>
+        <select name="offerLetterAccepted" value={editFormData.offerLetterAccepted} onChange={editHandleChange}>
+          <option value="" disabled>Select</option>
           <option value="yes">Yes</option>
           <option value="No">No</option>
         </select>
       </td>
       <td>
-        <select 
-          value={editFormData.candidateEnrolled}
-          name="candidateEnrolled"
-          onChange={editHandleChange}
-          className="border mt-3 mr-3 rounded"
-        >
-          <option value="" disabled defaultChecked>Select</option>
+        <select value={editFormData.candidateEnrolled} name="candidateEnrolled" onChange={editHandleChange}>
+          <option value="" disabled>Select</option>
           <option value="yes">Yes</option>
           <option value="No">No</option>
         </select>
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.jobTitle}
-          name="jobTitle"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.jobTitle} name="jobTitle" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.company}
-          name="company"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.company} name="company" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.jobBoard}
-          name="jobBoard"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.jobBoard} name="jobBoard" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="date"
-          className="border mt-3 mr-3"
-          value={editFormData.jobPostedDate.slice(0, 10)}
-          name="jobPostedDate"
-          onChange={editHandleChange}
-        />
+        <input type="date" value={editFormData.jobPostedDate.slice(0, 10)} name="jobPostedDate" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.jobPostedBy}
-          name="jobPostedBy"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.jobPostedBy} name="jobPostedBy" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="date"
-          className="border mt-3 mr-3"
-          value={editFormData.appliedDate.slice(0, 10)}
-          name="appliedDate"
-          onChange={editHandleChange}
-        />
+        <input type="date" value={editFormData.appliedDate.slice(0, 10)} name="appliedDate" onChange={editHandleChange} />
       </td>
       <td>
-        <input
-          type="text"
-          className="border mt-3 mr-3"
-          value={editFormData.interviewedBy}
-          name="interviewedBy"
-          onChange={editHandleChange}
-        />
+        <input type="text" value={editFormData.interviewedBy} name="interviewedBy" onChange={editHandleChange} />
       </td>
     </tr>
   );

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import UploadExcel from "../components/UploadExcel";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+
 const AddCandidate = () => {
   const [formData, setFormData] = useState<CandidateFormData>({
     name: "",
@@ -27,7 +28,7 @@ const AddCandidate = () => {
     comment: "",
     company: "",
     jobTitle: "",
-    interviewedBy: ""
+    interviewedBy: "",
   });
 
   const navigate = useNavigate();
@@ -37,10 +38,7 @@ const AddCandidate = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name as keyof typeof prev]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name as keyof typeof prev]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
@@ -57,216 +55,184 @@ const AddCandidate = () => {
   const checkMail = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${VITE_API_URL}/admin/check-mail?email=${formData.email.trim()}`, {
-        method: "GET",
-        credentials: "include",
-
-      });
-
-
+      const response = await fetch(
+        `${VITE_API_URL}/admin/check-mail?email=${formData.email.trim()}`,
+        { method: "GET", credentials: "include" }
+      );
       const res = await response.json();
       setMailValidity(res.message);
-
     } catch (e) {
       console.log(e);
     }
-  }
+  };
+
   return (
-    <div className="w-full flex flex-col items-center">
-      <UploadExcel></UploadExcel>
+    <div className="form-page">
+      {/* Upload Excel */}
+      <UploadExcel />
 
-      <div className="flex flex-row w-full items-center justify-center">
-        <hr className="h-px my-8 bg-neutral-quaternary border max-w-sm w-full" />
-        <p className="p-2">OR</p>
-        <hr className="h-px my-8 bg-neutral-quaternary border max-w-sm w-full" />
-      </div>
+      {/* Divider */}
+      <div className="form-divider">OR</div>
 
-      <div className="flex flex-col bg-white shadow-xl px-10 py-4 rounded-2xl w-full  max-w-3xl my-3 justify-center items-center">
-        <div className="text-center pb-6">
-          <h2 className="text-3xl font-bold">Add Candidate</h2>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 w-full  max-w-xl "
-        >
-          <div className="flex flex-col">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded">
-              Name
-            </label>
+      {/* Manual form */}
+      <div className="form-card">
+        <h2 className="form-card-title">Add Candidate</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-field">
+            <label className="form-label">Name</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Enter candidate name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col  ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded">
-              Email
-            </label>
+          <div className="form-field">
+            <label className="form-label">Email</label>
             <input
               required
               type="email"
+              className="form-input"
               placeholder="Enter candidate email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="border p-2 rounded"
             />
           </div>
 
-          {mailValidity}
+          {mailValidity && <p className="mail-validity">{mailValidity}</p>}
 
-          <div>
+          <div style={{ marginBottom: "16px" }}>
             <button
               type="button"
-              className="p-3 bg-blue-600 rounded-md cursor-pointer text-white hover:bg-blue-500"
+              className="btn-nav-primary"
               onClick={checkMail}
-            >Verify mail</button>
+            >
+              Verify Email
+            </button>
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Phone
-            </label>
+          <div className="form-field">
+            <label className="form-label">Phone</label>
             <input
               required
               type="tel"
+              className="form-input"
               placeholder="Enter candidate phone no."
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              LinkedIn URL
-            </label>
+          <div className="form-field">
+            <label className="form-label">LinkedIn URL</label>
             <input
               type="text"
-              placeholder="linkedin.com"
+              className="form-input"
+              placeholder="linkedin.com/in/..."
               name="linkedinURL"
               value={formData.linkedinURL}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Job board
-            </label>
+          <div className="form-field">
+            <label className="form-label">Job Board</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Enter job board name"
               name="jobBoard"
               value={formData.jobBoard}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Job posted Date
-            </label>
+          <div className="form-field">
+            <label className="form-label">Job Posted Date</label>
             <input
               required
               type="date"
+              className="form-input"
               name="jobPostedDate"
               value={formData.jobPostedDate.slice(0, 10)}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Applied Date
-            </label>
+          <div className="form-field">
+            <label className="form-label">Applied Date</label>
             <input
               required
               type="date"
+              className="form-input"
               name="appliedDate"
               value={formData.appliedDate.slice(0, 10)}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Job Posted By
-            </label>
+          <div className="form-field">
+            <label className="form-label">Job Posted By</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Posted by"
               name="jobPostedBy"
               value={formData.jobPostedBy}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Company
-            </label>
+          <div className="form-field">
+            <label className="form-label">Company</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Enter Company"
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded ">
-              Job Title
-            </label>
+          <div className="form-field">
+            <label className="form-label">Job Title</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Enter job title"
               name="jobTitle"
               value={formData.jobTitle}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex flex-col ">
-            <label className="subpixel-antialiased text-lg font-stretch-expanded">
-              Interviewed by
-            </label>
+          <div className="form-field">
+            <label className="form-label">Interviewed By</label>
             <input
               required
               type="text"
+              className="form-input"
               placeholder="Interviewed by"
               name="interviewedBy"
               value={formData.interviewedBy}
               onChange={handleChange}
-              className="border p-2 rounded "
             />
           </div>
 
-          <div className="flex lg:mt-6 w-full justify-center">
-            <button
-              type="submit"
-              className="bg-cyan-600 px-6 py-3  rounded-lg text-white text-lg hover:cursor-pointer hover:bg-cyan-500"
-            >
-              Add
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "24px" }}>
+            <button type="submit" className="form-submit">
+              Add Candidate
             </button>
           </div>
         </form>

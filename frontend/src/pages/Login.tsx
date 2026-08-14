@@ -128,56 +128,70 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="register-container">
       {isOpen && <VerifyPopUp email={email} />}
-      <div style={styles.card}>
-        <h2 style={styles.title}>Log In</h2>
-        <form onSubmit={handleLogin}>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email</label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={styles.input}
-              disabled={isLoading}
-              required
-            />
-          </div>
+      <div className="auth-card">
+        <h2 className="auth-title">Welcome back</h2>
+        <p className="auth-subtitle">Sign in to your account to continue</p>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
-              disabled={isLoading}
-              required
-            />
-          </div>
+        <form className="auth-form" onSubmit={handleLogin}>
+          <input
+            type="email"
+            className="auth-input"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
+            required
+          />
 
-          {error && <div style={styles.errorBox}>{error}</div>}
+          <input
+            type="password"
+            className="auth-input"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+            required
+          />
+
+          {error && (
+            <div
+              style={{
+                color: "#ff6b6b",
+                background: "rgba(255,107,107,0.08)",
+                border: "1px solid rgba(255,107,107,0.2)",
+                borderRadius: "10px",
+                padding: "12px 16px",
+                fontSize: "14px",
+              }}
+            >
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
-            style={{
-              ...styles.button,
-              opacity: isLoading ? 0.7 : 1,
-              cursor: isLoading ? "not-allowed" : "pointer",
-            }}
+            className="btn-auth-primary"
             disabled={isLoading}
+            style={{ opacity: isLoading ? 0.7 : 1, cursor: isLoading ? "not-allowed" : "pointer" }}
           >
-            {isLoading ? "Loading..." : "Sign In"}
+            {isLoading ? "Signing in..." : "Sign In"}
           </button>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "15px" }}>
+          <div className="auth-forgot">
             <button
-              style={styles.resetBtn}
-              onClick={handleResetPassword}
               type="button"
+              onClick={handleResetPassword}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#ffffff",
+                fontSize: "13px",
+                cursor: "pointer",
+                textDecoration: "underline",
+                fontFamily: "inherit",
+              }}
             >
               Reset password
             </button>
@@ -188,82 +202,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "75vh",
-    backgroundColor: "#ffffff",
-    width: "100%",
-  },
-  card: {
-    padding: "50px 40px",
-    borderRadius: "24px",
-    backgroundColor: "#0a3d62",
-    width: "100%",
-    maxWidth: "450px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-    color: "white",
-    fontFamily: "sans-serif",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "30px",
-    fontSize: "28px",
-    fontWeight: "bold",
-  },
-  inputGroup: {
-    marginBottom: "20px",
-    textAlign: "left",
-  },
-  label: {
-    display: "block",
-    marginBottom: "8px",
-    fontWeight: "500",
-    fontSize: "14px",
-    color: "#e0e0e0",
-  },
-  input: {
-    width: "100%",
-    padding: "12px 16px",
-    borderRadius: "8px",
-    border: "1px solid #1e5a84",
-    backgroundColor: "#104e7a",
-    color: "white",
-    boxSizing: "border-box",
-    outline: "none",
-    fontSize: "15px",
-  },
-  button: {
-    width: "100%",
-    padding: "14px",
-    color: "#0a3d62",
-    fontWeight: "bold",
-    border: "none",
-    borderRadius: "12px",
-    fontSize: "16px",
-    marginTop: "20px",
-    background: "linear-gradient(to right, #1dd1a1, #10ac84)",
-    transition: "0.3s",
-  },
-  resetBtn: {
-    background: "none",
-    border: "none",
-    color: "#a0a0a0",
-    fontSize: "13px",
-    cursor: "pointer",
-    textDecoration: "underline",
-  },
-  errorBox: {
-    color: "#ff6b6b",
-    backgroundColor: "rgba(255, 107, 107, 0.1)",
-    padding: "10px",
-    borderRadius: "5px",
-    marginBottom: "15px",
-    fontSize: "14px",
-    textAlign: "center",
-  },
-};
-
-export default LoginPage;
+export default LoginPage;
