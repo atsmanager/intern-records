@@ -12,6 +12,7 @@ interface LoginResponse {
     id: string;
     role: string;
     name: string;
+    company: string;
   };
 }
 
@@ -56,9 +57,11 @@ export const LoginValidationController = async (
     let role = person.role || "editor";
     const secretKey = process.env.JWT_SECRET_KEY || process.env.JWT_SECRET || "fallback_secret_key";
 
-    const token = jwt.sign({ id: person._id }, secretKey, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: person._id, role: person.role, company: person.company || "" },
+      secretKey,
+      { expiresIn: "7d" }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -73,6 +76,7 @@ export const LoginValidationController = async (
         id: `${person._id}`,
         role: role,
         name: person.username,
+        company: person.company || "",
       },
     };
 
@@ -85,7 +89,7 @@ export const LoginValidationController = async (
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, company } = req.body;
     if (!username || !email || !password) {
       return res.status(400).json({ message: "Username, email, and password are required" });
     }
@@ -100,6 +104,7 @@ export const createUser = async (req: Request, res: Response) => {
       username,
       email: email.toLowerCase().trim(),
       passwordHash,
+      company: company ? company.trim() : "",
     });
 
     await admin.save();
@@ -256,6 +261,7 @@ export const getUsers = async (req: Request, res: Response) => {
         id: user._id,
         name: user.username,
         email: user.email,
+        company: user.company || "",
       };
     });
 

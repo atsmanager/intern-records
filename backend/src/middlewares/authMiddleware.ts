@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 
 interface TokenPayload {
   id: string;
+  role?: string;
+  company?: string;
 }
 
 const verifyToken = (
@@ -28,6 +30,8 @@ const verifyToken = (
     ) as TokenPayload;
 
     req.user = decoded.id;
+    req.userRole = decoded.role || "editor";
+    req.userCompany = decoded.company || "";
 
     next();
   } catch (error) {

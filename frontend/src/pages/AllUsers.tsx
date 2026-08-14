@@ -6,6 +6,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  company: string;
 }
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
@@ -72,6 +73,7 @@ const UserTable: React.FC = () => {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Company</th>
                   <th>Email</th>
                   <th>Actions</th>
                 </tr>
@@ -80,6 +82,19 @@ const UserTable: React.FC = () => {
                 {users.map((user) => (
                   <tr key={user.id}>
                     <td>{user.name}</td>
+                    <td>
+                      <span style={{
+                        background: user.company ? "rgba(99,102,241,0.15)" : "rgba(255,255,255,0.05)",
+                        border: user.company ? "1px solid rgba(99,102,241,0.3)" : "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "6px",
+                        padding: "3px 10px",
+                        fontSize: "12px",
+                        color: user.company ? "#a5b4fc" : "#888",
+                        fontWeight: 600,
+                      }}>
+                        {user.company || "—"}
+                      </span>
+                    </td>
                     <td>{user.email}</td>
                     <td>
                       <div className="tbl-actions">

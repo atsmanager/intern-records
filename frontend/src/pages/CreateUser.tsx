@@ -7,6 +7,7 @@ const CreateUser: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [company, setCompany] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const CreateUser: React.FC = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, company }),
       });
 
       if (!response.ok) throw new Error("Failed to create user");
@@ -44,6 +45,7 @@ const CreateUser: React.FC = () => {
     setEmail("");
     setPassword("");
     setUsername("");
+    setCompany("");
   };
 
   return (
@@ -64,6 +66,14 @@ const CreateUser: React.FC = () => {
             onChange={(e) => setUsername(e.target.value)}
             disabled={isLoading}
             required
+          />
+          <input
+            type="text"
+            className="auth-input"
+            placeholder="Company name"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            disabled={isLoading}
           />
           <input
             type="email"

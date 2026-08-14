@@ -15,7 +15,7 @@ import Loading from "../components/Loading";
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 // Routes that should be accessible without authentication
-const PUBLIC_ROUTES = ["/reset-password"];
+const PUBLIC_ROUTES = ["/reset-password", "/update-password"];
 
 const AppRoute = () => {
   const { user, login } = useLoginStore();
@@ -55,6 +55,7 @@ const AppRoute = () => {
       <Route path="/all-candidate" element={<AllCandidate />}></Route>
       <Route path="/create-user" element={<CreateUser />}></Route>
       <Route path="/reset-password" element={<ResetPassword />}></Route>
+      <Route path="/update-password" element={<ResetPassword />}></Route>
       <Route path="/all-users" element={<AllUsers />}></Route>
       <Route
         path="/rejected-candidates"

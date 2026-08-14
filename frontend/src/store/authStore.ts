@@ -7,7 +7,8 @@ type User = {
     id: string,
     email: string,
     user: string,
-    role: string
+    role: string,
+    company: string
 }
 
 type LoginStore = {

@@ -5,6 +5,7 @@ export interface IAdmin extends Document {
   email: string;
   passwordHash: string;
   role: 'superadmin' | 'moderator' | 'editor';
+  company?: string;
   isActive: boolean;
   lastLogin: Date;
   createdAt: Date;
@@ -35,6 +36,11 @@ const AdminSchema: Schema = new Schema(
       type: String,
       enum: ['superadmin', 'editor'],
       default: 'editor'
+    },
+    company: {
+      type: String,
+      trim: true,
+      default: ''
     },
     isActive: {
       type: Boolean,

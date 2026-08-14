@@ -111,6 +111,13 @@ export const getCandidateController = async (req: Request, res: Response) => {
     status: { $ne: "rejected" },
   };
 
+  // Non-superadmin users are scoped to their company
+  const userRole = req.userRole || "editor";
+  const userCompany = req.userCompany || "";
+  if (userRole !== "superadmin" && userCompany) {
+    filter.company = { $regex: new RegExp(`^${userCompany}$`, "i") };
+  }
+
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
@@ -159,6 +166,13 @@ export const getRejectedCandidateController = async (req: Request, res: Response
   let filter: any = {
     status: "rejected",
   };
+
+  // Non-superadmin users are scoped to their company
+  const userRole = req.userRole || "editor";
+  const userCompany = req.userCompany || "";
+  if (userRole !== "superadmin" && userCompany) {
+    filter.company = { $regex: new RegExp(`^${userCompany}$`, "i") };
+  }
 
   if (search) {
     filter.$or = [

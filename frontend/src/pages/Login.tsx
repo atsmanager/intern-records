@@ -9,6 +9,7 @@ interface LoginResponse {
     id: string;
     role: string;
     name: string;
+    company: string;
   };
 }
 
@@ -17,6 +18,7 @@ type User = {
   email: string;
   user: string;
   role: string;
+  company: string;
 };
 
 const VITE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
@@ -117,6 +119,7 @@ const LoginPage: React.FC = () => {
         email,
         user: data.user.name,
         role: data.user.role,
+        company: data.user.company || "",
       };
 
       login(user);
