@@ -18,9 +18,11 @@ const UserTable: React.FC = () => {
   try {
     useEffect(() => {
       const func = async (): Promise<void> => {
+        const token = localStorage.getItem("authToken");
         const response = await fetch(`${VITE_API_URL}/admin/get-users`, {
           method: "GET",
           credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (!response.ok) throw new Error("Error while fetching users");
         const data = await response.json();
@@ -38,9 +40,11 @@ const UserTable: React.FC = () => {
 
   const handleRemoveUser = async (email: string) => {
     try {
+      const token = localStorage.getItem("authToken");
       const response = await fetch(`${VITE_API_URL}/admin/remove-user/${email}`, {
         method: "DELETE",
         credentials: "include",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       const data = await response.json();
       setUsers(users.filter((user) => user.email !== email));

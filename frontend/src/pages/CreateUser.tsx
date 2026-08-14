@@ -25,9 +25,13 @@ const CreateUser: React.FC = () => {
     }
 
     try {
+      const token = localStorage.getItem("authToken");
       const response = await fetch(`${VITE_API_URL}/admin/createuser`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
         body: JSON.stringify({ username, email, password, company }),
       });
