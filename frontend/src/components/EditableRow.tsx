@@ -58,11 +58,11 @@ const EditableRow = ({ candidat, setEditCandidateId, onUpdate }: EditableRowProp
     <tr key={candidat._id} style={{ background: "rgba(155,89,247,0.05)" }}>
       <td>
         <div className="tbl-actions">
-          <button className="btn-tbl-save" onClick={handleEditSave} type="button">
-            Save
+          <button className="btn-tbl-save" onClick={handleEditSave} title="Save">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
           </button>
-          <button className="btn-tbl-cancel" onClick={handleEditCancel} type="button">
-            Cancel
+          <button className="btn-tbl-cancel" onClick={handleEditCancel} title="Cancel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
       </td>

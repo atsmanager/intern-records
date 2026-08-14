@@ -125,7 +125,7 @@ body {
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font);
   transition: opacity 0.2s;
 }
 
@@ -138,7 +138,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font);
   transition: opacity 0.2s;
   position: relative;
 }
@@ -1733,72 +1733,73 @@ body {
 }
 
 /* ── TABLE ACTION BUTTONS ── */
-.btn-tbl-edit {
-  background: rgba(34,197,94,0.12);
-  border: 1px solid rgba(34,197,94,0.25);
-  color: var(--accent-green);
-  padding: 6px 14px;
-  border-radius: 8px;
+.btn-tbl-edit,
+.btn-tbl-delete,
+.btn-tbl-save,
+.btn-tbl-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  letter-spacing: 0.3px;
+  border: 1px solid transparent;
+  font-family: var(--font);
+}
+
+.btn-tbl-edit {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.2);
 }
 .btn-tbl-edit:hover {
-  background: rgba(34,197,94,0.2);
-  border-color: rgba(34,197,94,0.4);
+  background: rgba(34, 197, 94, 0.18);
+  border-color: rgba(34, 197, 94, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
 }
 
 .btn-tbl-delete {
-  background: rgba(239,68,68,0.12);
-  border: 1px solid rgba(239,68,68,0.25);
-  color: #ef4444;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  white-space: nowrap;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.2);
 }
 .btn-tbl-delete:hover {
-  background: rgba(239,68,68,0.22);
-  border-color: rgba(239,68,68,0.4);
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 .btn-tbl-save {
-  background: rgba(79,142,247,0.12);
-  border: 1px solid rgba(79,142,247,0.25);
-  color: var(--accent-blue);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  white-space: nowrap;
+  background: rgba(79, 142, 247, 0.1);
+  color: #60a5fa;
+  border-color: rgba(79, 142, 247, 0.2);
 }
 .btn-tbl-save:hover {
-  background: rgba(79,142,247,0.22);
-  border-color: rgba(79,142,247,0.4);
+  background: rgba(79, 142, 247, 0.18);
+  border-color: rgba(79, 142, 247, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 142, 247, 0.15);
 }
 
 .btn-tbl-cancel {
-  background: rgba(245,158,11,0.12);
-  border: 1px solid rgba(245,158,11,0.25);
-  color: var(--accent-orange);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  white-space: nowrap;
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.2);
 }
 .btn-tbl-cancel:hover {
-  background: rgba(245,158,11,0.22);
-  border-color: rgba(245,158,11,0.4);
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
 .tbl-actions {
@@ -2194,6 +2195,12 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   color-scheme: dark;
 }
 
+/* ── HAMBURGER MENU ── */
+.hamburger {
+  display: none;
+}
+
+
 /* ══════════════════════════════════════
    MOBILE RESPONSIVE — APP PAGES
    ══════════════════════════════════════ */
@@ -2206,24 +2213,49 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
     padding: 8px 16px;
     height: auto;
     min-height: 60px;
-    flex-wrap: wrap;
-    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
   }
 
   .navbar-logo-name { font-size: 20px; }
   .navbar-logo-sub  { display: none; }
 
-  .navbar-links {
-    gap: 14px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-    /* Hide scrollbar for a cleaner look */
-    scrollbar-width: none; 
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 100;
   }
-  .navbar-links::-webkit-scrollbar {
+  .hamburger .bar {
+    width: 24px;
+    height: 3px;
+    background: #ffffff;
+    border-radius: 3px;
+    transition: all 0.3s;
+  }
+  .hamburger.open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .hamburger.open .bar:nth-child(2) { opacity: 0; }
+  .hamburger.open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  .navbar-links {
     display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 16px;
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    z-index: 90;
+    gap: 16px;
+    width: 240px;
+  }
+  .navbar-links.active {
+    display: flex;
   }
 
   .navbar-links a,
@@ -2252,9 +2284,9 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   .panel-body  { padding: 16px; }
 
   /* Filter bar: each filter takes full width */
-  .filter-bar { flex-direction: column; gap: 10px; }
+  .filter-bar { flex-direction: column; gap: 10px; width: 100%; align-items: stretch; }
   .filter-group { width: 100%; }
-  .filter-input { min-width: unset; width: 100%; }
+  .filter-input { min-width: unset; width: 100%; box-sizing: border-box; }
 
   /* Table: horizontally scrollable, smaller text */
   .data-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -2321,8 +2353,7 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   /* Navbar shrinks further */
   .navbar-inner { padding: 8px 12px; }
   .navbar-logo-name { font-size: 17px; }
-  .navbar-links { gap: 10px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-  .navbar-links::-webkit-scrollbar { display: none; }
+  .navbar-links { top: 60px; right: 12px; }
   .navbar-links a,
   .navbar-links button { font-size: 12px; }
 

@@ -1,14 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginStore } from "../store/authStore";
 import Logo from "../assets/logo.jpeg";
+import { useState } from "react";
 
 const Navbar = () => {
   const { user, logout } = useLoginStore();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   function handleLogout() {
     logout();
     navigate("/?logout=success");
+    setIsMobileMenuOpen(false);
   }
 
   return (
@@ -30,8 +33,16 @@ const Navbar = () => {
           </div>
         </Link>
 
+        {user && (
+          <div className={`hamburger ${isMobileMenuOpen ? "open" : ""}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+          </div>
+        )}
+
         {/* Nav links */}
-        <ul className="navbar-links">
+        <ul className={`navbar-links ${isMobileMenuOpen ? "active" : ""}`}>
           {user && user.role === "superadmin" && (
             <li>
               <Link to="/all-users" style={{ textDecoration: "none" }}>
