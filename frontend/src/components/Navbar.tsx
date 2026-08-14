@@ -41,6 +41,13 @@ const Navbar = () => {
           )}
           {user && (
             <li>
+              <Link to="/import-candidate" style={{ textDecoration: "none" }}>
+                Import Data
+              </Link>
+            </li>
+          )}
+          {user && (
+            <li>
               <Link to="/all-candidate" style={{ textDecoration: "none" }}>
                 All Candidates
               </Link>

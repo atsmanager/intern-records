@@ -22,12 +22,12 @@ router.post('/reset-password', passwordReset)
 router.post("/verify-otp", verifyOTP)
 router.post("/update-password", updatePassword);
 router.get("/check-role", checkRole);
+router.get("/logout", logoutController);
 
 router.use(verifyToken);
 router.post("/createuser", createUser);
 router.get("/get-users", getUsers);
 router.delete("/remove-user/:id", removeUser);
 router.get("/check-mail", checkMail);
-router.get("/logout", logoutController);
 
 export default router;

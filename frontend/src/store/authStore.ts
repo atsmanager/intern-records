@@ -18,19 +18,23 @@ type LoginStore = {
 
 const logout = async (set: StoreApi<LoginStore>['setState']) => {
     try {
+        const token = localStorage.getItem("authToken");
         const response = await fetch(`${VITE_API_URL}/admin/logout`, {
+            method: "GET",
+            headers: token ? { "Authorization": `Bearer ${token}` } : {},
             credentials: "include"
-        })
-        if (response.status === 200) {
-            localStorage.removeItem("authToken");
-            set({ user: null })
+        });
+        const res = await response.json().catch(() => null);
+        if (res?.message) {
+            alert(res.message);
         }
-        const res = await response.json()
-        alert(res.message);
     } catch (error) {
-        console.log(`Error at authStore while logging out: ${error}`)
+        console.log(`Error at authStore while logging out: ${error}`);
+    } finally {
+        localStorage.removeItem("authToken");
+        set({ user: null });
     }
-}
+};
 
 export const useLoginStore = create<LoginStore>((set) => ({
     user: null,

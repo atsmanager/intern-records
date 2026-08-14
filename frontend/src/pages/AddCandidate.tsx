@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { type CandidateFormData } from "../types/candidate";
 import { candidateAddApi } from "../api/candidateApi";
-import { useNavigate } from "react-router-dom";
-import UploadExcel from "../components/UploadExcel";
+import { useNavigate, Link } from "react-router-dom";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
@@ -68,11 +67,13 @@ const AddCandidate = () => {
 
   return (
     <div className="form-page">
-      {/* Upload Excel */}
-      <UploadExcel />
-
-      {/* Divider */}
-      <div className="form-divider">OR</div>
+      <div style={{ width: "100%", maxWidth: "680px", display: "flex", justifyContent: "flex-end", marginBottom: "-8px" }}>
+        <Link to="/import-candidate">
+          <button className="btn-nav-primary">
+            📁 Import from Excel →
+          </button>
+        </Link>
+      </div>
 
       {/* Manual form */}
       <div className="form-card">

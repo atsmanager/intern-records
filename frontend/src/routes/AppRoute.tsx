@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLoginStore } from "../store/authStore";
 import AddCandidate from "../pages/AddCandidate";
+import ImportCandidate from "../pages/ImportCandidate";
 import AllCandidate from "../pages/AllCandidate";
 import LoginPage from "../pages/Login";
 import CreateUser from "../pages/CreateUser";
@@ -50,6 +51,7 @@ const AppRoute = () => {
     <Routes>
       <Route path="/" element={user === null ? <LoginPage /> : <AllCandidate />} />
       <Route path="/add-candidate" element={<AddCandidate />}></Route>
+      <Route path="/import-candidate" element={<ImportCandidate />}></Route>
       <Route path="/all-candidate" element={<AllCandidate />}></Route>
       <Route path="/create-user" element={<CreateUser />}></Route>
       <Route path="/reset-password" element={<ResetPassword />}></Route>

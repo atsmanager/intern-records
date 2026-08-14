@@ -352,8 +352,13 @@ export const uploadExcelController = async (req: Request, res: Response) => {
     // Convert to JSON, default value blank
     const data: any[] = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
+    if (!data || data.length === 0) {
+      return res.status(400).json({ message: "The uploaded file is empty" });
+    }
+
     let saved = 0;
     let skipped = 0;
+    const errors: string[] = [];
 
     // Helper to clean phone, but don't truncate
     const normalizePhone = (value: any): string => {
@@ -370,86 +375,100 @@ export const uploadExcelController = async (req: Request, res: Response) => {
       return phone;
     };
 
-    // Helper to parse date safely
-    const parseDate = (value: any) => {
+    // Helper to parse date safely (handles strings and Excel serial numbers)
+    const parseDate = (value: any): Date | undefined => {
       if (!value) return undefined;
+      if (typeof value === "number") {
+        // Excel serial date to JS Date
+        return new Date((value - 25569) * 86400 * 1000);
+      }
       const date = new Date(value);
       return isNaN(date.getTime()) ? undefined : date;
     };
 
-    for (const row of data) {
-      const name = row["name"] || row["Name"];
-      const email = row["email"] || row["Email"];
-      const phone = normalizePhone(row["phone"] || row["Phone"]);
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      try {
+        const name = String(row["name"] || row["Name"] || row["candidateName"] || row["Candidate Name"] || "").trim();
+        const email = String(row["email"] || row["Email"] || row["emailId"] || row["Email ID"] || "").toLowerCase().trim();
+        const phone = normalizePhone(row["phone"] || row["Phone"] || row["phoneNo"] || row["Phone Number"] || row["Mobile"] || "");
 
-      // Skip only if all three are empty
-      if (!name && !email && !phone) {
+        // Name, Email and Phone are required in database schema
+        if (!name || !email || !phone) {
+          skipped++;
+          continue;
+        }
+
+        // Duplicate check on email OR phone
+        const exist = await Candidate.findOne({
+          $or: [{ email: email }, { phone: phone }],
+        });
+
+        if (exist) {
+          skipped++;
+          continue;
+        }
+
+        // Status
+        const allowedStatus = [
+          "",
+          "busy",
+          "interested",
+          "no response",
+          "no incoming service",
+          "rejected",
+        ];
+        let statusRaw = String(row["status"] || row["Status"] || "").trim().toLowerCase();
+        const status = allowedStatus.includes(statusRaw) ? statusRaw : "";
+
+        const joiningDate = parseDate(row["joiningDate"] || row["Joining Date"] || row["JoiningDate"]);
+        const appliedDate = parseDate(row["appliedDate"] || row["Applied Date"] || row["Date Applied"]) || new Date();
+        const duration = String(row["duration"] || row["Duration"] || "").trim();
+        const jobBoard = String(row["jobBoard"] || row["Job Board"] || "").trim();
+        const jobPostedBy = String(row["jobPostedBy"] || row["Job Posted By"] || row["Interviewer"] || "").trim();
+        const offerLetterSent = String(row["offerLetterSent"] || row["Offer Letter Sent"] || row["Offer letter Send"] || "").trim();
+        const offerLetterAccepted = String(row["offerLetterAccepted"] || row["Offer Letter Accepted"] || row["Accepted Offer Letter"] || "").trim();
+        const candidateEnrolled = String(row["candidateEnrolled"] || row["Candidate Enrolled"] || row["Candidates Enrolled"] || "").trim();
+        const company = String(row["company"] || row["Company"] || "").trim();
+        const jobTitle = String(row["jobTitle"] || row["Job Title"] || "").trim();
+        const interviewedBy = String(row["interviewedBy"] || row["Interviewed By"] || row["Interviewer"] || "").trim();
+
+        // Create candidate
+        await Candidate.create({
+          name,
+          email,
+          phone,
+          status,
+          joiningDate,
+          duration,
+          jobBoard,
+          jobPostedDate: new Date(),
+          appliedDate,
+          jobPostedBy,
+          offerLetterSent,
+          offerLetterAccepted,
+          candidateEnrolled,
+          company,
+          jobTitle,
+          interviewedBy,
+        });
+
+        saved++;
+      } catch (rowErr: any) {
         skipped++;
-        continue;
+        errors.push(`Row ${i + 1}: ${rowErr.message}`);
       }
-
-      // Duplicate check on email OR phone
-      const exist = await Candidate.findOne({
-        $or: [{ email: email?.toLowerCase() }, { phone: phone }],
-      });
-
-      if (exist) {
-        skipped++;
-        continue;
-      }
-
-      // Status: if not in enum, save as blank
-      const allowedStatus = [
-        "",
-        "busy",
-        "interested",
-        "no response",
-        "no incoming service",
-        "rejected",
-      ];
-      let statusRaw = row["status"] || row["Status"] || "";
-      const status = allowedStatus.includes(statusRaw.trim())
-        ? statusRaw.trim()
-        : "";
-
-      const parseJoiningDate = (value: any) => {
-        if (!value) return undefined;
-
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) return date;
-        return undefined;
-      };
-
-      // Create candidate
-      await Candidate.create({
-        name: name?.trim() || "",
-        email: email?.toLowerCase().trim() || "",
-        phone: phone || "",
-        status,
-        joiningDate: parseJoiningDate(row["joiningDate"]),
-        duration: row["duration"] || row["Duration"] || "",
-        jobBoard: "",
-        jobPostedDate: new Date(),
-        appliedDate:
-          parseDate(row["appliedDate"] || row["Date Applied"]) || new Date(),
-        jobPostedBy: row["Interviewer"] || "",
-        offerLetterSent: row["Offer letter Send"] || "",
-        offerLetterAccepted: row["Accepted Offer Letter"] || "",
-        candidateEnrolled: row["Candidates Enrolled"] || "",
-      });
-
-      saved++;
     }
 
-    res.status(200).json({
-      message: "Excel upload completed",
+    return res.status(200).json({
+      message: `Excel upload completed. ${saved} imported, ${skipped} skipped.`,
       saved,
       skipped,
       total: data.length,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    console.error("Excel upload fatal error:", error);
+    return res.status(500).json({
       message: "Excel upload failed",
       error: (error as Error).message,
     });

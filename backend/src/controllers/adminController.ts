@@ -19,14 +19,15 @@ export const logoutController = async (req: Request, res: Response) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
-    res.status(200).json({ message: "Logout successful" });
+    return res.status(200).json({ message: "Logout successful" });
   } catch (e) {
-    console.log(e);
+    console.error("Logout error:", e);
+    return res.status(500).json({ message: "Error during logout" });
   }
-}
+};
 
 export const LoginValidationController = async (
   req: Request,

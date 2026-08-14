@@ -21,6 +21,17 @@ router.put("/:id", updateCandidateController);
 router.get("/check-joining-reminders", checkJoiningReminderController);
 router.get("/rejected",getRejectedCandidateController);
 
-router.post("/upload-excel", uploadExcel.single("file"), uploadExcelController);
+router.post(
+  "/upload-excel",
+  (req, res, next) => {
+    uploadExcel.single("file")(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message || "File upload error" });
+      }
+      next();
+    });
+  },
+  uploadExcelController
+);
 
 export default router;
