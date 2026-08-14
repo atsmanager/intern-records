@@ -148,10 +148,26 @@ export const passwordReset = async (req: Request, res: Response) => {
 
     try {
       await transporter.sendMail({
-        from: process.env.SENDERMAIL,
+        from: `"ATS Manager" <${process.env.SENDERMAIL}>`,
+        replyTo: process.env.SENDERMAIL,
         to: email,
-        subject: "Regarding reset password request",
-        text: `Dear user,\nYour OTP is ${otp}. It is valid for 5 minutes.`,
+        subject: "Your OTP for Password Reset – ATS Manager",
+        text: `Dear User,\n\nYour OTP for resetting your ATS Manager password is:\n\n${otp}\n\nThis OTP is valid for 5 minutes. Do not share it with anyone.\n\nIf you did not request this, please ignore this email.\n\nRegards,\nATS Manager Team`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #f9f9f9; border-radius: 8px; overflow: hidden;">
+            <div style="background: #1a1a2e; padding: 24px; text-align: center;">
+              <h2 style="color: #ffffff; margin: 0; font-size: 22px;">ATS Manager</h2>
+            </div>
+            <div style="padding: 32px 24px; background: #ffffff;">
+              <h3 style="margin: 0 0 16px; color: #111;">Password Reset OTP</h3>
+              <p style="color: #555; line-height: 1.6; margin: 0 0 24px;">Use the OTP below to reset your password. It is valid for <strong>5 minutes</strong>.</p>
+              <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; text-align: center; letter-spacing: 8px; font-size: 32px; font-weight: bold; color: #1a1a2e;">
+                ${otp}
+              </div>
+              <p style="color: #999; font-size: 13px; margin: 24px 0 0;">If you did not request this, please ignore this email.</p>
+            </div>
+          </div>
+        `,
       });
       console.log(`[EMAIL] OTP sent successfully to ${email}`);
     } catch (mailError: any) {
