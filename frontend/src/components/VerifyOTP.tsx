@@ -12,7 +12,7 @@ const VerifyPopUp = ({ email }: { email: string }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (cooldown > 0) {
       timer = setTimeout(() => setCooldown((prev) => prev - 1), 1000);
     }

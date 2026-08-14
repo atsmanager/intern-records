@@ -5,7 +5,6 @@ import { type Pagination, type Candidate } from "../types/candidate";
 import Loading from "../components/Loading";
 import ReadOnlyRow from "../components/ReadOnlyRow";
 import EditableRow from "../components/EditableRow";
-import axios from "axios";
 import { toast } from 'react-hot-toast';
 import React from "react";
 

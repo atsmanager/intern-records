@@ -6,7 +6,6 @@ import Loading from "../components/Loading";
 import ReadOnlyRow from "../components/ReadOnlyRow";
 import EditableRow from "../components/EditableRow";
 import React from "react";
-import axios from "axios";
 import { toast } from 'react-hot-toast';
 
 const RejectedCandidates = () => {
