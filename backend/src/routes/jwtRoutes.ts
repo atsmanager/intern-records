@@ -8,6 +8,7 @@ interface MeResponse {
     id: string;
     role: string;
     name: string;
+    company: string;
   };
 }
 
@@ -28,6 +29,7 @@ router.get("/me", verifyToken, async (req: Request, res: Response) => {
       email: user.email,
       role: user.role,
       user: user.username,
+      company: user.company || "",
     }
   });
 });

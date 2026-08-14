@@ -25,16 +25,21 @@ const AppRoute = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
     fetch(`${VITE_API_URL}/auth/me`, {
       credentials: "include",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
         if (!res.ok) throw new Error("Not logged in");
         return res.json();
       })
       .then((data) => login(data.user))
-      .catch(() => console.log("Error at routes/approute"))
+      .catch((e) => console.log("Session check failed:", e.message))
       .finally(() => setLoading(false));
   }, [login]);
 

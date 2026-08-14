@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type CandidateFormData } from "../types/candidate";
 import { candidateAddApi } from "../api/candidateApi";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
@@ -44,10 +45,12 @@ const AddCandidate = () => {
     e.preventDefault();
     try {
       const data = await candidateAddApi(formData);
-      alert(data.message);
-      navigate("/all-candidate");
+      if (data) {
+        toast.success(data.message);
+        navigate("/all-candidate");
+      }
     } catch (error: any) {
-      alert(error.response?.data?.error);
+      toast.error(error.response?.data?.error || "Error adding candidate");
     }
   };
 

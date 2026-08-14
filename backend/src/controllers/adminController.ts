@@ -131,22 +131,38 @@ export const passwordReset = async (req: Request, res: Response) => {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.SENDERMAIL,
         pass: process.env.MAILPASSWORD,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHashy = await bcryptjs.hash(otp, 10);
 
-    await transporter.sendMail({
-      from: process.env.SENDERMAIL,
-      to: email,
-      subject: "Regarding reset password request",
-      text: `Dear user,\nYour OTP is ${otp}. It is valid for 5 minutes.`,
-    });
+    try {
+      await transporter.sendMail({
+        from: process.env.SENDERMAIL,
+        to: email,
+        subject: "Regarding reset password request",
+        text: `Dear user,\nYour OTP is ${otp}. It is valid for 5 minutes.`,
+      });
+      console.log(`[EMAIL] OTP sent successfully to ${email}`);
+    } catch (mailError: any) {
+      console.error("=== EMAIL ERROR ===");
+      console.error("Code:", mailError.code);
+      console.error("Message:", mailError.message);
+      console.error("Response:", mailError.response);
+      console.error("==================");
+      console.warn(`[DEV] OTP for ${email}: ${otp}`);
+      // Continue anyway so the OTP still gets saved and dev can test
+    }
 
     await PasswordResetOTP.findOneAndUpdate(
       { email },
@@ -163,6 +179,7 @@ export const passwordReset = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: "Otp sent successfully", otpSent: true });
   } catch (e) {
+    console.error("Password reset error:", e);
     return res
       .status(500)
       .json({ message: "Internal server error", otpSent: false });

@@ -2167,3 +2167,13 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* Global Form Styles for Dark UI */
+::placeholder {
+  color: #ffffff !important;
+  opacity: 0.8 !important;
+}
+
+input[type="date"], input[type="datetime-local"], input[type="time"] {
+  color-scheme: dark;
+}
+

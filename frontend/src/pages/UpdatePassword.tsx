@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
@@ -12,8 +13,8 @@ const UpdatePassword = () => {
 
   const HandleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length === 0) { alert('Enter a valid password'); return; }
-    if (confirmPassword !== password) { alert('Password does not match'); return; }
+    if (password.length === 0) { toast.error('Enter a valid password'); return; }
+    if (confirmPassword !== password) { toast.error('Password does not match'); return; }
 
     const response = await fetch(`${VITE_API_URL}/admin/update-password`, {
       method: 'POST',
@@ -23,7 +24,7 @@ const UpdatePassword = () => {
     });
 
     if (response.ok) {
-      alert("Updated password successfully");
+      toast.success("Updated password successfully");
       navigate('/');
     }
   };

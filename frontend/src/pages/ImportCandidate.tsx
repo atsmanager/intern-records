@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { uploadExcelApi } from "../api/candidateApi";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 import * as XLSX from "xlsx";
 
 interface PreviewRow {
@@ -101,7 +102,7 @@ const ImportCandidate = () => {
   const handleFileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) {
-      alert("Please select an Excel or CSV file first!");
+      toast.error("Please select an Excel or CSV file first!");
       return;
     }
 
@@ -111,12 +112,12 @@ const ImportCandidate = () => {
 
     try {
       const data = await uploadExcelApi(formData);
-      alert(data.message || "Upload completed successfully!");
+      toast.success(data.message || "Upload completed successfully!");
       setFile(null);
       setPreviewData([]);
       navigate("/all-candidate");
     } catch (error: any) {
-      alert(error.response?.data?.message || error.message || "Failed to upload file");
+      toast.error(error.response?.data?.message || error.message || "Failed to upload file");
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
@@ -40,7 +41,10 @@ const CreateUser: React.FC = () => {
 
       const data = await response.json();
       localStorage.setItem("authToken", data.token);
-      if (data?.message) alert(data.message);
+      if (data?.message) {
+        if (response.ok) toast.success(data.message);
+        else toast.error(data.message);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {

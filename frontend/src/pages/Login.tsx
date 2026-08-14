@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import VerifyPopUp from "../components/VerifyOTP";
 import { useLoginStore } from "../store/authStore";
 
@@ -32,6 +32,18 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isLoggedOut = searchParams.get("logout") === "success";
+  
+  const [hasVisited] = useState(() => {
+    const visited = localStorage.getItem("hasVisited");
+    if (!visited) {
+      localStorage.setItem("hasVisited", "true");
+      return false;
+    }
+    return true;
+  });
 
   const fetchUser = async (): Promise<LoginResponse> => {
     const response = await fetch(`${VITE_URL}/admin/login`, {
@@ -70,13 +82,6 @@ const LoginPage: React.FC = () => {
 
       if (!roleCheck.ok) {
         throw new Error("Enter a valid email to reset");
-      }
-
-      const data = await roleCheck.json();
-
-      if (data.role !== "superadmin") {
-        alert("Only super admin can reset password 🙅‍♂️");
-        return;
       }
 
       const response = await fetch(`${VITE_URL}/admin/reset-password`, {
@@ -135,8 +140,23 @@ const LoginPage: React.FC = () => {
     <div className="register-container">
       {isOpen && <VerifyPopUp email={email} />}
       <div className="auth-card">
-        <h2 className="auth-title">Welcome back</h2>
+        <h2 className="auth-title">{hasVisited ? "Welcome back" : "Welcome to ATS"}</h2>
         <p className="auth-subtitle">Sign in to your account to continue</p>
+
+        {isLoggedOut && (
+          <div style={{
+            background: "rgba(16, 185, 129, 0.1)",
+            border: "1px solid rgba(16, 185, 129, 0.3)",
+            color: "#10b981",
+            padding: "12px",
+            borderRadius: "8px",
+            marginBottom: "20px",
+            fontSize: "14px",
+            textAlign: "center"
+          }}>
+            Logged out successfully.
+          </div>
+        )}
 
         <form className="auth-form" onSubmit={handleLogin}>
           <input

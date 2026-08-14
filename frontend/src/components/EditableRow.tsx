@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { type CandidateFormData, type Candidate } from "../types/candidate";
+import { toast } from "react-hot-toast";
 import { candidateEditApi } from "../api/candidateApi";
 
 interface EditableRowProp {
@@ -43,11 +44,11 @@ const EditableRow = ({ candidat, setEditCandidateId, onUpdate }: EditableRowProp
   const handleEditSave = async () => {
     try {
       const data = await candidateEditApi(candidat._id, editFormData);
-      alert(data.message);
+      toast.success(data.message);
       onUpdate(data.updateCandidate);
       setEditCandidateId(null);
     } catch (error: any) {
-      alert(error.response?.data?.error);
+      toast.error(error.response?.data?.error || "Error updating candidate");
     }
   };
 

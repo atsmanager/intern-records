@@ -27,7 +27,7 @@ const logout = async (set: StoreApi<LoginStore>['setState']) => {
         });
         const res = await response.json().catch(() => null);
         if (res?.message) {
-            alert(res.message);
+            console.log(res.message);
         }
     } catch (error) {
         console.log(`Error at authStore while logging out: ${error}`);

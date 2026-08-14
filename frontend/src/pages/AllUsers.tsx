@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
 
 interface User {
   id: number;
@@ -48,9 +49,10 @@ const UserTable: React.FC = () => {
       });
       const data = await response.json();
       setUsers(users.filter((user) => user.email !== email));
-      alert(data.message);
-    } catch (e) {
-      console.log(`${e}`);
+      toast.success(data.message);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e.message || "Failed to remove user");
     }
   };
 

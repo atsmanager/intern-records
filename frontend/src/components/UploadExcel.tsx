@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { uploadExcelApi } from "../api/candidateApi";
+import { toast } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 
 const UploadExcel = () => {
@@ -17,11 +18,11 @@ const UploadExcel = () => {
     if (file) { formData.append("file", file); setLoading(true); }
     try {
       const data = await uploadExcelApi(formData);
-      alert(data.message);
+      toast.success(data.message);
       setFile(null);
       navigate("/all-candidate");
     } catch (error: any) {
-      alert(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Failed to upload file");
     }
     setLoading(false);
   };

@@ -6,6 +6,8 @@ import Loading from "../components/Loading";
 import ReadOnlyRow from "../components/ReadOnlyRow";
 import EditableRow from "../components/EditableRow";
 import React from "react";
+import axios from "axios";
+import { toast } from 'react-hot-toast';
 
 const RejectedCandidates = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -56,10 +58,11 @@ const RejectedCandidates = () => {
   const handleDelete = async (id: string): Promise<void> => {
     try {
       const data = await candidateDeleteApi(id);
-      alert(data.message);
+      toast.success(data.message);
       setCandidates(candidates.filter((c) => c._id !== id));
     } catch (error: any) {
-      alert(error.response?.data?.error);
+      console.error(error);
+      toast.error(error.response?.data?.error || "Error taking action");
     }
   };
 
