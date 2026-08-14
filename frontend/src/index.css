@@ -2173,8 +2173,22 @@ body {
   color: #ffffff !important;
   opacity: 1 !important;
 }
-:-ms-input-placeholder { color: #ffffff !important; }
-::-ms-input-placeholder { color: #ffffff !important; }
+::-webkit-input-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+::-moz-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+:-ms-input-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+::-ms-input-placeholder {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
 
 input[type="date"], input[type="datetime-local"], input[type="time"] {
   color-scheme: dark;
@@ -2201,7 +2215,15 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
 
   .navbar-links {
     gap: 14px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none; 
+  }
+  .navbar-links::-webkit-scrollbar {
+    display: none;
   }
 
   .navbar-links a,
@@ -2299,7 +2321,8 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   /* Navbar shrinks further */
   .navbar-inner { padding: 8px 12px; }
   .navbar-logo-name { font-size: 17px; }
-  .navbar-links { gap: 10px; }
+  .navbar-links { gap: 10px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .navbar-links::-webkit-scrollbar { display: none; }
   .navbar-links a,
   .navbar-links button { font-size: 12px; }
 

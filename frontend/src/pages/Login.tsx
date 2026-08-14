@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import VerifyPopUp from "../components/VerifyOTP";
 import { useLoginStore } from "../store/authStore";
+import { toast } from "react-hot-toast";
 
 interface LoginResponse {
   token: string;
@@ -66,7 +67,7 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     if (!email) {
-      setError("Please enter your email to reset password");
+      toast.error("Please enter your email to reset password");
       return;
     }
 
@@ -96,8 +97,10 @@ const LoginPage: React.FC = () => {
       }
 
       setIsOpen(true);
+      toast.success("Reset link sent!");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : "Something went wrong");
     }
   };
 
