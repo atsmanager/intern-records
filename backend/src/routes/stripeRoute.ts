@@ -90,7 +90,7 @@ router.post("/create-checkout-session", async (req: Request, res: Response) => {
 router.get("/session/:sessionId", async (req: Request, res: Response) => {
   try {
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId as string);
     
     // Provision user account if paid
     if (session.payment_status === 'paid' && session.metadata?.email) {

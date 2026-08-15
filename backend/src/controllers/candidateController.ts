@@ -482,9 +482,21 @@ export const uploadExcelController = async (req: Request, res: Response) => {
         const offerLetterSent = String(row["offerLetterSent"] || row["Offer Letter Sent"] || row["Offer letter Send"] || "").trim();
         const offerLetterAccepted = String(row["offerLetterAccepted"] || row["Offer Letter Accepted"] || row["Accepted Offer Letter"] || "").trim();
         const candidateEnrolled = String(row["candidateEnrolled"] || row["Candidate Enrolled"] || row["Candidates Enrolled"] || "").trim();
-        const company = String(row["company"] || row["Company"] || "").trim();
+        let company = String(row["company"] || row["Company"] || "").trim();
         const jobTitle = String(row["jobTitle"] || row["Job Title"] || "").trim();
         const interviewedBy = String(row["interviewedBy"] || row["Interviewed By"] || row["Interviewer"] || "").trim();
+
+        // Enforce user's company scope
+        const userRole = req.userRole || "editor";
+        const userCompany = req.userCompany || "";
+        if (userRole !== "superadmin" && userCompany) {
+          if (company && company.toLowerCase() !== userCompany.toLowerCase()) {
+            skipped++;
+            errors.push(`Row ${i + 1}: Company mismatch. You can only import candidates for ${userCompany}`);
+            continue;
+          }
+          company = userCompany;
+        }
 
         // Create candidate
         await Candidate.create({

@@ -69,7 +69,8 @@ const ImportCandidate = () => {
       "Interviewer",
       "Offer letter Send",
       "Accepted Offer Letter",
-      "Candidates Enrolled"
+      "Candidates Enrolled",
+      "Company"
     ];
 
     const sampleRow = [
@@ -83,7 +84,8 @@ const ImportCandidate = () => {
       "Sarah Connor",
       "yes",
       "yes",
-      "yes"
+      "yes",
+      "Centennial Infotech"
     ];
 
     const csvContent =

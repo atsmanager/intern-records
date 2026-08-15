@@ -1,11 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
-
-// Publishable key — safe to be in the frontend
-const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_REPLACE_WITH_YOUR_PUBLISHABLE_KEY'
-);
 
 // Map plan names to backend planId strings
 const PLAN_ID_MAP: Record<string, string> = {

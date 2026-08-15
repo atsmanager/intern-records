@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
