@@ -2401,3 +2401,122 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   .pagination button { padding: 7px 11px; font-size: 12px; }
   .pagination .page-info { padding: 7px 11px; font-size: 11px; }
 }
+
+/* STICKY TABLE SETTINGS */
+.data-table-wrap {
+  overflow: auto;
+  max-height: calc(100vh - 220px);
+  position: relative;
+}
+
+.data-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0d0d12;
+  border-bottom: 1px solid rgba(155, 89, 247, 0.3);
+}
+
+/* Sticky Column 1: Actions */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: #0d0d12;
+  min-width: 90px;
+  width: 90px;
+  max-width: 90px;
+}
+
+/* Sticky Column 2: Name */
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+  position: sticky;
+  left: 90px;
+  z-index: 10;
+  background: #0d0d12;
+  min-width: 140px;
+}
+
+/* Top-Left Corner Headers (Actions & Name headers when scrolling both down & right) */
+.data-table thead th:nth-child(1) {
+  top: 0;
+  left: 0;
+  z-index: 30;
+  background: #0d0d12;
+}
+
+.data-table thead th:nth-child(2) {
+  top: 0;
+  left: 90px;
+  z-index: 30;
+  background: #0d0d12;
+}
+
+.data-table tbody td {
+  background: #000000;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table tbody tr {
+  background: var(--bg-primary);
+}
+
+.data-table tbody tr:hover td {
+  background: var(--bg-card-hover, #15151b) !important;
+}
+
+.data-table tbody tr:hover td:nth-child(1),
+.data-table tbody tr:hover td:nth-child(2) {
+  background: #181824 !important;
+}
+
+/* ── ALL USERS PAGE ACTION BUTTONS (DESKTOP & MOBILE RESPONSIVE) ── */
+.btn-user-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.user-btn-text {
+  display: inline;
+}
+
+.user-btn-icon {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .user-btn-text {
+    display: none !important;
+  }
+  .user-btn-icon {
+    display: block !important;
+  }
+  .btn-user-action {
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+  }
+}
+
+
+@media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }

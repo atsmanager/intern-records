@@ -34,13 +34,13 @@ app.use(cors({
 app.use(express.json());
 
 import candidateRoute from "./routes/candidateRoute";
-import adminRoute from "./routes/adminRoutes"
+import adminRoute from "./routes/adminRoutes";
+import stripeRoute from "./routes/stripeRoute";
 
-
-
-app.use("/api/candidate",candidateRoute);
-app.use("/api/admin",adminRoute)
-app.use("/api/auth",jwtRoute)
+app.use("/api/candidate", candidateRoute);
+app.use("/api/admin", adminRoute);
+app.use("/api/auth", jwtRoute);
+app.use("/api/stripe", stripeRoute);
 
 const PORT = Number(process.env.PORT) || 5000;
 

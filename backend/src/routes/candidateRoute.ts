@@ -7,6 +7,7 @@ import {
   checkJoiningReminderController,
   uploadExcelController,
   getRejectedCandidateController,
+  getJobTitlesController,
 } from "../controllers/candidateController";
 import { uploadExcel } from "../middlewares/uploadExcel";
 import verifyToken from "../middlewares/authMiddleware";
@@ -20,6 +21,7 @@ router.delete("/:id", deleteCandidateController);
 router.put("/:id", updateCandidateController);
 router.get("/check-joining-reminders", checkJoiningReminderController);
 router.get("/rejected",getRejectedCandidateController);
+router.get("/job-titles", getJobTitlesController);
 
 router.post(
   "/upload-excel",

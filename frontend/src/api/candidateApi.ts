@@ -18,11 +18,19 @@ export const candidateGetApi = async (
   limit: number = 10,
   search: string = "",
   jobPostedFrom?: string,
-  jobPostedTo?: string
+  jobPostedTo?: string,
+  jobTitles?: string[]
 ): Promise<CandidateListResponse> => {
-  const res = await api.get(`/candidate`, {
-    params: { page, limit, search, jobPostedFrom, jobPostedTo },
-  });
+  const params: any = { page, limit, search, jobPostedFrom, jobPostedTo };
+  if (jobTitles && jobTitles.length > 0) {
+    params.jobTitles = jobTitles.join(',');
+  }
+  const res = await api.get(`/candidate`, { params });
+  return res.data;
+};
+
+export const getJobTitlesApi = async (): Promise<string[]> => {
+  const res = await api.get(`/candidate/job-titles`);
   return res.data;
 };
 

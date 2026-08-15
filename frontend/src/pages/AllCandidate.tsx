@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { candidateGetApi, candidateDeleteApi } from "../api/candidateApi";
+import { candidateGetApi, candidateDeleteApi, getJobTitlesApi } from "../api/candidateApi";
 import { type Pagination, type Candidate } from "../types/candidate";
 import Loading from "../components/Loading";
 import ReadOnlyRow from "../components/ReadOnlyRow";
@@ -14,6 +14,9 @@ const AllCandidate = () => {
   const [limit] = useState<number>(5);
   const [search, setSearch] = useState<string>("");
   const [jobPostedFrom, setJobPostedFrom] = useState<string>("");
+  const [jobTitlesList, setJobTitlesList] = useState<string[]>([]);
+  const [selectedJobTitles, setSelectedJobTitles] = useState<string[]>([]);
+  const [jobTitleDropdownOpen, setJobTitleDropdownOpen] = useState<boolean>(false);
 
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
@@ -25,6 +28,30 @@ const AllCandidate = () => {
   const [editCandidateId, setEditCandidateId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.job-title-dropdown')) {
+        setJobTitleDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchJobTitles = async () => {
+      try {
+        const titles = await getJobTitlesApi();
+        setJobTitlesList(titles);
+      } catch (error) {
+        console.error("Error fetching job titles", error);
+      }
+    };
+    fetchJobTitles();
+  }, []);
+
   const totalPages =
     Number.isInteger(pagination.totalPages) && pagination.totalPages > 0
       ? pagination.totalPages
@@ -33,7 +60,7 @@ const AllCandidate = () => {
   useEffect(() => {
     const fetchCandidate = async (): Promise<void> => {
       try {
-        const data = await candidateGetApi(page, limit, search, jobPostedFrom);
+        const data = await candidateGetApi(page, limit, search, jobPostedFrom, undefined, selectedJobTitles);
         const candidates = data?.candidate || [];
         const pagination = data?.pagination || {};
         setCandidates(candidates);
@@ -52,7 +79,7 @@ const AllCandidate = () => {
       }
     };
     fetchCandidate();
-  }, [page, search, limit, jobPostedFrom]);
+  }, [page, search, limit, jobPostedFrom, selectedJobTitles]);
 
   const handleDelete = async (id: string): Promise<void> => {
     try {
@@ -108,9 +135,61 @@ const AllCandidate = () => {
                   onChange={(e) => { setPage(1); setJobPostedFrom(e.target.value); }}
                 />
               </div>
+              <div className="filter-group job-title-dropdown" style={{ position: "relative" }}>
+                <span className="filter-label">Job Title</span>
+                <div 
+                  className="filter-input" 
+                  style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                  onClick={() => setJobTitleDropdownOpen(!jobTitleDropdownOpen)}
+                >
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "120px" }}>
+                    {selectedJobTitles.length > 0 ? selectedJobTitles.join(', ') : "Select"}
+                  </span>
+                  <span style={{ marginLeft: "8px", fontSize: "10px" }}>▼</span>
+                </div>
+                {jobTitleDropdownOpen && (
+                  <div style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    width: "100%",
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "4px",
+                    marginTop: "4px",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                    zIndex: 50,
+                    display: "flex",
+                    flexDirection: "column",
+                    padding: "8px",
+                    boxShadow: "var(--shadow-card)"
+                  }}>
+                    {jobTitlesList.map(title => (
+                      <label key={title} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 4px", cursor: "pointer" }}>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedJobTitles.includes(title)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedJobTitles([...selectedJobTitles, title]);
+                              setPage(1);
+                            } else {
+                              setSelectedJobTitles(selectedJobTitles.filter(t => t !== title));
+                              setPage(1);
+                            }
+                          }}
+                        />
+                        <span style={{ color: "#ffffff", fontSize: "13px" }}>{title}</span>
+                      </label>
+                    ))}
+                    {jobTitlesList.length === 0 && <span style={{ color: "var(--text-muted)", fontSize: "12px", padding: "4px" }}>No job titles available</span>}
+                  </div>
+                )}
+              </div>
               <button
                 className="btn-reset"
-                onClick={() => { setSearch(""); setJobPostedFrom(""); setPage(1); }}
+                onClick={() => { setSearch(""); setJobPostedFrom(""); setSelectedJobTitles([]); setPage(1); }}
               >
                 Reset
               </button>

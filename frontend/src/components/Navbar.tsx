@@ -33,40 +33,51 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {user && (
-          <div className={`hamburger ${isMobileMenuOpen ? "open" : ""}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            <div className="bar"></div>
-            <div className="bar"></div>
-            <div className="bar"></div>
-          </div>
-        )}
+        {/* Always show hamburger on mobile so users can access public links like Pricing */}
+        <div className={`hamburger ${isMobileMenuOpen ? "open" : ""}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <div className="bar"></div>
+          <div className="bar"></div>
+          <div className="bar"></div>
+        </div>
 
         {/* Nav links */}
         <ul className={`navbar-links ${isMobileMenuOpen ? "active" : ""}`}>
+          {user && (
+            <li>
+              <Link to="/profile" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
+                My Profile
+              </Link>
+            </li>
+          )}
+          <li>
+            <Link to="/pricing" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
+              Pricing
+            </Link>
+          </li>
           {user && user.role === "superadmin" && (
             <li>
-              <Link to="/all-users" style={{ textDecoration: "none" }}>
+              <Link to="/all-users" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
                 All Users
               </Link>
             </li>
           )}
           {user && (
             <li>
-              <Link to="/add-candidate" style={{ textDecoration: "none" }}>
+              <Link to="/add-candidate" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
                 Add Candidate
               </Link>
             </li>
           )}
           {user && (
             <li>
-              <Link to="/import-candidate" style={{ textDecoration: "none" }}>
+              <Link to="/import-candidate" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
                 Import Data
               </Link>
             </li>
           )}
           {user && (
             <li>
-              <Link to="/all-candidate" style={{ textDecoration: "none" }}>
+              <Link to="/all-candidate" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
                 All Candidates
               </Link>
             </li>

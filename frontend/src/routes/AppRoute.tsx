@@ -9,13 +9,30 @@ import CreateUser from "../pages/CreateUser";
 import ResetPassword from "../pages/UpdatePassword";
 import AllUsers from "../pages/AllUsers";
 import RejectedCandidates from "../pages/RejectedCandidates";
+import Pricing from "../pages/Pricing";
+import Checkout from "../pages/Checkout";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import RefundPolicy from "../pages/RefundPolicy";
+import TermsConditions from "../pages/TermsConditions";
+import SupportCenter from "../pages/SupportCenter";
+import Profile from "../pages/Profile";
+import PaymentSuccess from "../pages/PaymentSuccess";
 import Loading from "../components/Loading";
-
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 // Routes that should be accessible without authentication
-const PUBLIC_ROUTES = ["/reset-password", "/update-password"];
+const PUBLIC_ROUTES = [
+  "/reset-password", 
+  "/update-password", 
+  "/pricing", 
+  "/checkout", 
+  "/privacy-policy", 
+  "/refund-policy", 
+  "/terms",
+  "/support",
+  "/payment-success"
+];
 
 const AppRoute = () => {
   const { user, login } = useLoginStore();
@@ -61,6 +78,14 @@ const AppRoute = () => {
       <Route path="/create-user" element={<CreateUser />}></Route>
       <Route path="/reset-password" element={<ResetPassword />}></Route>
       <Route path="/update-password" element={<ResetPassword />}></Route>
+      <Route path="/pricing" element={<Pricing />}></Route>
+      <Route path="/checkout" element={<Checkout />}></Route>
+      <Route path="/privacy-policy" element={<PrivacyPolicy />}></Route>
+      <Route path="/refund-policy" element={<RefundPolicy />}></Route>
+      <Route path="/terms" element={<TermsConditions />}></Route>
+      <Route path="/support" element={<SupportCenter />}></Route>
+      <Route path="/payment-success" element={<PaymentSuccess />}></Route>
+      <Route path="/profile" element={<Profile />}></Route>
       <Route path="/all-users" element={<AllUsers />}></Route>
       <Route
         path="/rejected-candidates"

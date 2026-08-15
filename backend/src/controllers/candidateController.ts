@@ -139,6 +139,16 @@ export const getCandidateController = async (req: Request, res: Response) => {
     }
   }
 
+  const jobTitles = req.query.jobTitles;
+  if (jobTitles) {
+    if (typeof jobTitles === 'string') {
+      const titlesArray = jobTitles.split(',');
+      filter.jobTitle = { $in: titlesArray.map((t: string) => new RegExp(`^${t.trim()}$`, 'i')) };
+    } else if (Array.isArray(jobTitles)) {
+      filter.jobTitle = { $in: jobTitles.map((t: any) => new RegExp(`^${String(t).trim()}$`, 'i')) };
+    }
+  }
+
   const skip = (page - 1) * limit;
 
   const candidate = await Candidate.find(filter).skip(skip).limit(limit);
@@ -195,6 +205,16 @@ export const getRejectedCandidateController = async (req: Request, res: Response
     }
   }
 
+  const jobTitles = req.query.jobTitles;
+  if (jobTitles) {
+    if (typeof jobTitles === 'string') {
+      const titlesArray = jobTitles.split(',');
+      filter.jobTitle = { $in: titlesArray.map((t: string) => new RegExp(`^${t.trim()}$`, 'i')) };
+    } else if (Array.isArray(jobTitles)) {
+      filter.jobTitle = { $in: jobTitles.map((t: any) => new RegExp(`^${String(t).trim()}$`, 'i')) };
+    }
+  }
+
   const skip = (page - 1) * limit;
 
   const candidate = await Candidate.find(filter).skip(skip).limit(limit);
@@ -209,6 +229,25 @@ export const getRejectedCandidateController = async (req: Request, res: Response
       totalPages: Math.ceil(total / limit),
     },
   });
+};
+
+export const getJobTitlesController = async (req: Request, res: Response) => {
+  try {
+    const userRole = req.userRole || "editor";
+    const userCompany = req.userCompany || "";
+    let filter: any = {};
+    if (userRole !== "superadmin" && userCompany) {
+      filter.company = { $regex: new RegExp(`^${userCompany}$`, "i") };
+    }
+    const jobTitles = await Candidate.distinct("jobTitle", filter);
+    const validJobTitles = jobTitles.filter(title => title && title.trim() !== "");
+    res.status(200).json(validJobTitles);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching job titles",
+      error: (error as Error).message,
+    });
+  }
 };
 
 //Delete Candidate
