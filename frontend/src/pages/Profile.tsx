@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLoginStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+
+const VITE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
 const Profile = () => {
   const { user } = useLoginStore();
   const navigate = useNavigate();
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   if (!user) {
     navigate('/');
@@ -21,6 +28,41 @@ const Profile = () => {
   };
 
   const plan = getPlan();
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return 'N/A';
+    return new Date(dateStr).toLocaleDateString();
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password || password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${VITE_API_URL}/admin/update-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to update password');
+      toast.success('Password updated successfully!');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      toast.error(err.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: '60px 20px', minHeight: '100vh', background: '#000' }}>
@@ -88,10 +130,21 @@ const Profile = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <p style={{ color: '#6b6b88', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '8px' }}>Current Plan</p>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: plan.bg, border: `1px solid ${plan.color}44`, borderRadius: '8px', padding: '8px 16px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: plan.bg, border: `1px solid ${plan.color}44`, borderRadius: '8px', padding: '8px 16px', marginBottom: '16px' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={plan.color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span style={{ color: plan.color, fontWeight: '700', fontSize: '15px' }}>{plan.label}</span>
               </div>
+              
+              {user.paymentDate && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <p style={{ color: '#a0a0b8', fontSize: '13px' }}>
+                    <strong style={{ color: '#fff', fontWeight: '600' }}>Payment Date:</strong> {formatDate(user.paymentDate)}
+                  </p>
+                  <p style={{ color: '#a0a0b8', fontSize: '13px' }}>
+                    <strong style={{ color: '#fff', fontWeight: '600' }}>Validity Until:</strong> {user.planId === 'professional' ? formatDate(user.validityDate) : 'Lifetime Access'}
+                  </p>
+                </div>
+              )}
             </div>
             {!isAdmin && (
               <button
@@ -102,6 +155,45 @@ const Profile = () => {
               </button>
             )}
           </div>
+        </div>
+        {/* Change Password Card */}
+        <div style={{ background: '#0d0d12', borderRadius: '20px', padding: '32px 40px', border: '1px solid rgba(255,255,255,0.08)', marginTop: '20px' }}>
+          <h2 style={{ color: '#fff', fontSize: '20px', fontWeight: '700', marginBottom: '20px' }}>Security</h2>
+          <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ color: '#a0a0b8', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '8px' }}>New Password</label>
+                <input
+                  type="password"
+                  placeholder="Min 6 characters"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+              <div>
+                <label style={{ color: '#a0a0b8', fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '8px' }}>Confirm Password</label>
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={loading || !password || !confirmPassword}
+              style={{
+                background: loading || !password ? 'rgba(255,255,255,0.08)' : '#3b82f6',
+                color: loading || !password ? '#6b6b88' : '#fff',
+                border: 'none', borderRadius: '10px', padding: '12px 24px', fontWeight: '700', fontSize: '14px', cursor: loading || !password ? 'not-allowed' : 'pointer', alignSelf: 'flex-start', marginTop: '8px', transition: 'all 0.2s'
+              }}
+            >
+              {loading ? 'Updating...' : 'Update Password'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

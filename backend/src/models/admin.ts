@@ -6,6 +6,9 @@ export interface IAdmin extends Document {
   passwordHash: string;
   role: 'superadmin' | 'moderator' | 'editor';
   company?: string;
+  planId?: string;
+  paymentDate?: Date;
+  validityDate?: Date;
   isActive: boolean;
   lastLogin: Date;
   createdAt: Date;
@@ -41,6 +44,18 @@ const AdminSchema: Schema = new Schema(
       type: String,
       trim: true,
       default: ''
+    },
+    planId: {
+      type: String,
+      default: null
+    },
+    paymentDate: {
+      type: Date,
+      default: null
+    },
+    validityDate: {
+      type: Date,
+      default: null
     },
     isActive: {
       type: Boolean,

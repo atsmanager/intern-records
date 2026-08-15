@@ -8,7 +8,10 @@ type User = {
     email: string,
     user: string,
     role: string,
-    company: string
+    company: string,
+    planId?: string,
+    paymentDate?: string,
+    validityDate?: string
 }
 
 type LoginStore = {

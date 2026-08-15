@@ -22,6 +22,9 @@ const Checkout = () => {
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [country, setCountry] = useState('');
   const [coupon, setCoupon] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'upi' | 'paypal'>('card');
@@ -59,6 +62,19 @@ const Checkout = () => {
     if (!agreed) return;
     setError('');
 
+    if (!fullName || !email || !company || !password) {
+      setError('Please fill in all required fields (Name, Email, Company, Password).');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     if (isPremium) {
       navigate('/support');
       return;
@@ -71,7 +87,7 @@ const Checkout = () => {
       const response = await fetch(`${VITE_API_URL}/stripe/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId, fullName, email, company, password }),
       });
 
       const data = await response.json();
@@ -80,16 +96,11 @@ const Checkout = () => {
         throw new Error(data.error || 'Failed to create checkout session.');
       }
 
-      // Redirect to Stripe Checkout (most reliable approach)
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        // Fallback: use stripe.redirectToCheckout
-        const stripe = await stripePromise;
-        if (!stripe) throw new Error('Stripe failed to load.');
-        const { error: stripeError } = await stripe.redirectToCheckout({ sessionId: data.id });
-        if (stripeError) throw new Error(stripeError.message);
+      // Redirect to Stripe-hosted Checkout using the session URL
+      if (!data.url) {
+        throw new Error('No checkout URL returned from server.');
       }
+      window.location.href = data.url;
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -144,8 +155,16 @@ const Checkout = () => {
           <h1 style={{ fontSize: '36px', fontWeight: '900', color: '#fff', marginBottom: '8px' }}>Checkout</h1>
           <p style={{ color: '#a0a0b8', fontSize: '15px', marginBottom: '32px' }}>Complete your purchase securely.</p>
 
-          <input type="text" placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} style={inputStyle} />
-          <input type="email" placeholder="yourname@gmail.com" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '20px', marginBottom: '16px', marginTop: '16px' }}>Account Details</h3>
+          <input type="text" placeholder="Full Name *" value={fullName} onChange={e => setFullName(e.target.value)} style={inputStyle} />
+          <input type="email" placeholder="yourname@gmail.com *" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+          <input type="text" placeholder="Company Name *" value={company} onChange={e => setCompany(e.target.value)} style={inputStyle} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <input type="password" placeholder="Password (min 6 chars) *" value={password} onChange={e => setPassword(e.target.value)} style={{ ...inputStyle, marginBottom: 0 }} />
+            <input type="password" placeholder="Confirm Password *" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={{ ...inputStyle, marginBottom: 0 }} />
+          </div>
+
+          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '20px', marginBottom: '16px', marginTop: '24px' }}>Billing Details</h3>
           <select value={country} onChange={e => setCountry(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
             <option value="" style={{ background: '#0d0d12' }}>Select your country</option>
             <option value="IN" style={{ background: '#0d0d12' }}>India</option>
@@ -158,7 +177,7 @@ const Checkout = () => {
           </select>
           <input type="text" placeholder="Coupon Code (Optional)" value={coupon} onChange={e => setCoupon(e.target.value)} style={inputStyle} />
 
-          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '20px', marginBottom: '16px', marginTop: '8px' }}>Payment Method</h3>
+          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '20px', marginBottom: '16px', marginTop: '24px' }}>Payment Method</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
             {paymentOptions.map(opt => (
               <div

@@ -9,6 +9,9 @@ interface MeResponse {
     role: string;
     name: string;
     company: string;
+    planId?: string;
+    paymentDate?: Date;
+    validityDate?: Date;
   };
 }
 
@@ -30,6 +33,9 @@ router.get("/me", verifyToken, async (req: Request, res: Response) => {
       role: user.role,
       user: user.username,
       company: user.company || "",
+      planId: user.planId,
+      paymentDate: user.paymentDate,
+      validityDate: user.validityDate,
     }
   });
 });

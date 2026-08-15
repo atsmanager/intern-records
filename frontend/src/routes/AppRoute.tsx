@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLoginStore } from "../store/authStore";
 import AddCandidate from "../pages/AddCandidate";
@@ -15,6 +15,7 @@ import PrivacyPolicy from "../pages/PrivacyPolicy";
 import RefundPolicy from "../pages/RefundPolicy";
 import TermsConditions from "../pages/TermsConditions";
 import SupportCenter from "../pages/SupportCenter";
+import CreateTicket from "../pages/CreateTicket";
 import Profile from "../pages/Profile";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import Loading from "../components/Loading";
@@ -31,6 +32,7 @@ const PUBLIC_ROUTES = [
   "/refund-policy", 
   "/terms",
   "/support",
+  "/create-ticket",
   "/payment-success"
 ];
 
@@ -69,6 +71,26 @@ const AppRoute = () => {
   // If session check complete and still no user, show login
   if (!isPublicRoute && user === null) return <LoginPage />;
 
+  const isExpired = user && user.role !== 'superadmin' && user.validityDate && new Date(user.validityDate) < new Date();
+  
+  if (isExpired && !isPublicRoute && location.pathname !== '/profile') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 180px)', background: '#000', padding: '20px' }}>
+        <div style={{ background: '#0d0d12', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '40px', maxWidth: '500px', textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+          <h2 style={{ color: '#fff', fontSize: '24px', fontWeight: '800', marginBottom: '16px' }}>Subscription Expired</h2>
+          <p style={{ color: '#a0a0b8', fontSize: '15px', lineHeight: '1.6', marginBottom: '32px' }}>
+            Your validity is expired, repurchase our plans for Continue using the Website.
+          </p>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <Link to="/pricing" style={{ background: 'linear-gradient(135deg, #4f8ef7, #a855f7)', color: '#fff', textDecoration: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: '700' }}>View Plans</Link>
+            <Link to="/profile" style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', textDecoration: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: '700', border: '1px solid rgba(255,255,255,0.1)' }}>My Profile</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Routes>
       <Route path="/" element={user === null ? <LoginPage /> : <AllCandidate />} />
@@ -84,6 +106,7 @@ const AppRoute = () => {
       <Route path="/refund-policy" element={<RefundPolicy />}></Route>
       <Route path="/terms" element={<TermsConditions />}></Route>
       <Route path="/support" element={<SupportCenter />}></Route>
+      <Route path="/create-ticket" element={<CreateTicket />}></Route>
       <Route path="/payment-success" element={<PaymentSuccess />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/all-users" element={<AllUsers />}></Route>

@@ -1,5 +1,8 @@
 import { Router, Request, Response } from "express";
 import Stripe from "stripe";
+import bcryptjs from "bcryptjs";
+import nodemailer from "nodemailer";
+import Admin from "../models/admin";
 
 const router = Router();
 
@@ -33,10 +36,10 @@ const PLANS: Record<string, { name: string; price: number; mode: "payment" | "su
 
 // POST /api/stripe/create-checkout-session
 router.post("/create-checkout-session", async (req: Request, res: Response) => {
-  const { planId } = req.body as { planId: string };
+  const { planId, fullName, email, company, password } = req.body;
 
   if (!planId || !PLANS[planId]) {
-    return res.status(400).json({ error: "Invalid plan ID. Must be 'basic', 'professional', or 'premium'." });
+    return res.status(400).json({ error: "Invalid plan ID." });
   }
 
   const plan = PLANS[planId];
@@ -64,6 +67,13 @@ router.post("/create-checkout-session", async (req: Request, res: Response) => {
           quantity: 1,
         },
       ],
+      metadata: {
+        fullName: fullName || "",
+        email: email ? email.toLowerCase().trim() : "",
+        company: company || "",
+        passwordHash: password ? await bcryptjs.hash(password, 10) : "",
+        planId: planId
+      },
       billing_address_collection: "auto",
       success_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL || "http://localhost:5173"}/pricing`,
@@ -76,14 +86,76 @@ router.post("/create-checkout-session", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/stripe/session/:sessionId — verify payment after success redirect
+// GET /api/stripe/session/:sessionId — verify payment and provision account
 router.get("/session/:sessionId", async (req: Request, res: Response) => {
   try {
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    
+    // Provision user account if paid
+    if (session.payment_status === 'paid' && session.metadata?.email) {
+      const email = session.metadata.email;
+      const existingUser = await Admin.findOne({ email });
+      if (!existingUser && session.metadata.passwordHash) {
+        
+        // Calculate dates
+        const planId = session.metadata.planId || 'basic';
+        const paymentDate = new Date();
+        const validityDate = new Date();
+        if (planId === 'professional') {
+          validityDate.setFullYear(validityDate.getFullYear() + 1); // 1 year
+        } else {
+          validityDate.setFullYear(validityDate.getFullYear() + 100); // 100 years for basic
+        }
+
+        const admin = new Admin({
+          username: session.metadata.fullName || "User",
+          email: email,
+          passwordHash: session.metadata.passwordHash,
+          company: session.metadata.company || "",
+          planId,
+          paymentDate,
+          validityDate
+        });
+        await admin.save();
+
+        // Send confirmation email
+        try {
+          const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: { user: process.env.SENDERMAIL, pass: process.env.MAILPASSWORD },
+            tls: { rejectUnauthorized: false }
+          });
+          
+          await transporter.sendMail({
+            from: `"Centennial Infotech" <${process.env.SENDERMAIL}>`,
+            replyTo: process.env.SENDERMAIL,
+            to: email,
+            subject: "Payment Successful - ATS License Activated",
+            html: `
+              <div style="font-family: sans-serif; padding: 20px;">
+                <h2 style="color: #4f8ef7;">Welcome to Centennial Infotech ATS!</h2>
+                <p>Your payment for the <strong>${planId.toUpperCase()}</strong> plan was successful.</p>
+                <p>You can now log in using this email address and the password you created during checkout.</p>
+                <p><strong>Payment Date:</strong> ${paymentDate.toLocaleDateString()}</p>
+                <p><strong>Validity Until:</strong> ${planId === 'professional' ? validityDate.toLocaleDateString() : 'Lifetime Access'}</p>
+                <br />
+                <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}" style="background:#4f8ef7;color:#fff;padding:10px 20px;text-decoration:none;border-radius:5px;">Go to Dashboard</a>
+              </div>
+            `
+          });
+          console.log(`[EMAIL] Payment confirmation sent to ${email}`);
+        } catch (mailError) {
+          console.error("Payment confirmation email failed:", mailError);
+        }
+      }
+    }
+
     return res.json({
       status: session.payment_status,
-      customerEmail: session.customer_details?.email,
+      customerEmail: session.customer_details?.email || session.metadata?.email,
       amountTotal: session.amount_total,
       currency: session.currency,
     });

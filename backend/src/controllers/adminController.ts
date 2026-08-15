@@ -13,6 +13,9 @@ interface LoginResponse {
     role: string;
     name: string;
     company: string;
+    planId?: string;
+    paymentDate?: Date;
+    validityDate?: Date;
   };
 }
 
@@ -77,6 +80,9 @@ export const LoginValidationController = async (
         role: role,
         name: person.username,
         company: person.company || "",
+        planId: person.planId,
+        paymentDate: person.paymentDate,
+        validityDate: person.validityDate,
       },
     };
 
