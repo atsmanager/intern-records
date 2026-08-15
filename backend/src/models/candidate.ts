@@ -46,13 +46,11 @@ const candidateSchema = new Schema<ICandidate>(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
     },
     phone: {
       type: String,
       required: true,
-      unique: true,
     },
     linkedInProfile: {
       type: String,
@@ -120,6 +118,9 @@ const candidateSchema = new Schema<ICandidate>(
   },
   { timestamps: true }
 );
+
+candidateSchema.index({ company: 1, email: 1 }, { unique: true });
+candidateSchema.index({ company: 1, phone: 1 }, { unique: true });
 
 const Candidate = model<ICandidate>("Candidate", candidateSchema);
 

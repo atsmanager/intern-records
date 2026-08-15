@@ -115,8 +115,11 @@ export const createUser = async (req: Request, res: Response) => {
 
     await admin.save();
     return res.status(200).json({ message: "User created successfully" });
-  } catch (e) {
+  } catch (e: any) {
     console.error("Create user error:", e);
+    if (e.code === 11000 && e.keyPattern && e.keyPattern.username) {
+      return res.status(400).json({ message: "Username already existed. try diff username" });
+    }
     return res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -328,12 +331,26 @@ export const removeUser = async (req: Request, res: Response) => {
 export const checkMail = async (req: Request, res: Response) => {
   try {
     const email = (req.query.email as string | undefined)?.trim();
+    const queryCompany = (req.query.company as string | undefined)?.trim();
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
-    const candidate = await Candidate.findOne({ email: email.toLowerCase() });
+
+    const userRole = req.userRole || "editor";
+    const userCompany = req.userCompany || "";
+
+    let filter: any = { email: email.toLowerCase() };
+    if (userRole !== "superadmin" && userCompany) {
+      filter.company = userCompany;
+    } else if (queryCompany) {
+      filter.company = queryCompany;
+    } else {
+      filter.company = "";
+    }
+
+    const candidate = await Candidate.findOne(filter);
     if (candidate) {
-      return res.status(200).json({ message: "Email already exists" });
+      return res.status(200).json({ message: "Email already exists in this company" });
     }
     return res.status(200).json({ message: "Email available" });
   } catch (e) {

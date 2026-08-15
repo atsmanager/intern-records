@@ -114,7 +114,11 @@ const ImportCandidate = () => {
 
     try {
       const data = await uploadExcelApi(formData);
-      toast.success(data.message || "Upload completed successfully!");
+      if (data.skipped > 0 && data.errors && data.errors.length > 0) {
+        toast.error(`Imported ${data.saved} rows. Skipped ${data.skipped} rows.\nReason: ${data.errors[0]}`);
+      } else {
+        toast.success(data.message || "Upload completed successfully!");
+      }
       setFile(null);
       setPreviewData([]);
       navigate("/all-candidate");

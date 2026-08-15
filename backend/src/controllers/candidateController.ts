@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import Candidate from "../models/candidate";
 import { sendJoiningReminderEmailToHR } from "../utils/sendEmailToHR";
 import { sendJoiningReminderEmailToCandidate } from "../utils/sendEmailToCandidate";
@@ -47,12 +48,16 @@ export const addCandidateController = async (
       return;
     }
 
-    //exist candidate
+    // Check duplicate in the same company
     const existCandidate = await Candidate.findOne({
-      email
+      company: company || "",
+      $or: [
+        { email: email.toLowerCase().trim() },
+        { phone: phone.trim() }
+      ]
     });
     if (existCandidate) {
-      res.status(400).json({ error: "Candidate already exists" });
+      res.status(400).json({ error: "A candidate with this email or phone already exists in this company" });
       return;
     }
 
@@ -305,6 +310,19 @@ export const updateCandidateController = async (
       interviewedBy,
     } = req.body;
 
+    const duplicate = await Candidate.findOne({
+      _id: { $ne: new Types.ObjectId(id as string) },
+      company: company || "",
+      $or: [
+        { email: email.toLowerCase().trim() },
+        { phone: phone.trim() }
+      ]
+    });
+    if (duplicate) {
+      res.status(400).json({ error: "A candidate with this email or phone already exists in this company." });
+      return;
+    }
+
     const candidate = {
       name,
       email,
@@ -449,16 +467,32 @@ export const uploadExcelController = async (req: Request, res: Response) => {
         // Name, Email and Phone are required in database schema
         if (!name || !email || !phone) {
           skipped++;
+          errors.push(`Row ${i + 1}: Missing required fields. Name: "${name}", Email: "${email}", Phone: "${phone}"`);
           continue;
         }
 
-        // Duplicate check on email OR phone
+        // Enforce user's company scope
+        let company = String(row["company"] || row["Company"] || "").trim();
+        const userRole = req.userRole || "editor";
+        const userCompany = req.userCompany || "";
+        if (userRole !== "superadmin" && userCompany) {
+          if (company && company.toLowerCase() !== userCompany.toLowerCase()) {
+            skipped++;
+            errors.push(`Row ${i + 1}: Company mismatch. You can only import candidates for ${userCompany}`);
+            continue;
+          }
+          company = userCompany;
+        }
+
+        // Duplicate check on email OR phone within the same company
         const exist = await Candidate.findOne({
+          company: company || "",
           $or: [{ email: email }, { phone: phone }],
         });
 
         if (exist) {
           skipped++;
+          errors.push(`Row ${i + 1}: Duplicate record. A candidate with email "${email}" or phone "${phone}" already exists in company "${company || "None"}".`);
           continue;
         }
 
@@ -482,21 +516,8 @@ export const uploadExcelController = async (req: Request, res: Response) => {
         const offerLetterSent = String(row["offerLetterSent"] || row["Offer Letter Sent"] || row["Offer letter Send"] || "").trim();
         const offerLetterAccepted = String(row["offerLetterAccepted"] || row["Offer Letter Accepted"] || row["Accepted Offer Letter"] || "").trim();
         const candidateEnrolled = String(row["candidateEnrolled"] || row["Candidate Enrolled"] || row["Candidates Enrolled"] || "").trim();
-        let company = String(row["company"] || row["Company"] || "").trim();
         const jobTitle = String(row["jobTitle"] || row["Job Title"] || "").trim();
         const interviewedBy = String(row["interviewedBy"] || row["Interviewed By"] || row["Interviewer"] || "").trim();
-
-        // Enforce user's company scope
-        const userRole = req.userRole || "editor";
-        const userCompany = req.userCompany || "";
-        if (userRole !== "superadmin" && userCompany) {
-          if (company && company.toLowerCase() !== userCompany.toLowerCase()) {
-            skipped++;
-            errors.push(`Row ${i + 1}: Company mismatch. You can only import candidates for ${userCompany}`);
-            continue;
-          }
-          company = userCompany;
-        }
 
         // Create candidate
         await Candidate.create({
@@ -530,6 +551,7 @@ export const uploadExcelController = async (req: Request, res: Response) => {
       saved,
       skipped,
       total: data.length,
+      errors,
     });
   } catch (error) {
     console.error("Excel upload fatal error:", error);

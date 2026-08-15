@@ -58,7 +58,7 @@ const AddCandidate = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `${VITE_API_URL}/admin/check-mail?email=${formData.email.trim()}`,
+        `${VITE_API_URL}/admin/check-mail?email=${formData.email.trim()}&company=${formData.company.trim()}`,
         { method: "GET", credentials: "include" }
       );
       const res = await response.json();
