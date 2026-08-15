@@ -2293,13 +2293,13 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   .data-table { font-size: 12px; }
   .data-table thead th { padding: 10px 10px; font-size: 10px; }
   .data-table tbody td { padding: 10px 10px; font-size: 12px; }
-  .tbl-actions { gap: 4px; flex-wrap: wrap; }
+  .tbl-actions { gap: 8px; flex-wrap: nowrap; }
 
-  /* Action buttons smaller */
+  /* Action buttons (icons) size in tablet */
   .btn-tbl-edit,
   .btn-tbl-delete,
   .btn-tbl-save,
-  .btn-tbl-cancel { padding: 5px 10px; font-size: 11px; }
+  .btn-tbl-cancel { width: 28px; height: 28px; padding: 6px; }
 
   /* Pagination */
   .pagination { gap: 0; flex-wrap: wrap; justify-content: center; }
@@ -2366,10 +2366,12 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   .data-table { font-size: 11px; }
   .data-table thead th { padding: 8px 8px; font-size: 9px; }
   .data-table tbody td { padding: 8px 8px; font-size: 11px; }
+  
+  /* Action icons maintain circular shape on tiny screens */
   .btn-tbl-edit,
   .btn-tbl-delete,
   .btn-tbl-save,
-  .btn-tbl-cancel { padding: 4px 8px; font-size: 10px; border-radius: 6px; }
+  .btn-tbl-cancel { width: 26px; height: 26px; padding: 4px; border-radius: 50%; }
 
   /* Auth */
   .register-container { padding: 20px 12px; }
