@@ -4,8 +4,7 @@ import { candidateDeleteApi, candidateGetRejectedApi } from "../api/candidateApi
 import { type Pagination, type Candidate } from "../types/candidate";
 import Loading from "../components/Loading";
 import ReadOnlyRow from "../components/ReadOnlyRow";
-import EditableRow from "../components/EditableRow";
-import React from "react";
+import EditModal from "../components/EditModal";
 import { toast } from 'react-hot-toast';
 
 const RejectedCandidates = () => {
@@ -22,7 +21,7 @@ const RejectedCandidates = () => {
     totalPages: 1,
     search: "",
   });
-  const [editCandidateId, setEditCandidateId] = useState<string | null>(null);
+  const [editCandidate, setEditCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const totalPages =
@@ -66,7 +65,7 @@ const RejectedCandidates = () => {
   };
 
   const handleEditClick = (candidate: Candidate): void => {
-    setEditCandidateId(candidate._id);
+    setEditCandidate(candidate);
   };
 
   const handleCandidateUpdate = (updateCandidate: Candidate): void => {
@@ -78,6 +77,14 @@ const RejectedCandidates = () => {
   if (loading) return <Loading />;
 
   return (
+    <>
+    {editCandidate && (
+      <EditModal
+        candidate={editCandidate}
+        onClose={() => setEditCandidate(null)}
+        onUpdate={handleCandidateUpdate}
+      />
+    )}
     <div className="app-page">
       <div className="app-page-inner">
         <div className="panel">
@@ -149,22 +156,12 @@ const RejectedCandidates = () => {
                 <tbody>
                   {candidates?.length > 0 ? (
                     candidates.map((candidate) => (
-                      <React.Fragment key={candidate._id}>
-                        {editCandidateId === candidate._id ? (
-                          <EditableRow
-                            candidat={candidate}
-                            setEditCandidateId={setEditCandidateId}
-                            onUpdate={handleCandidateUpdate}
-                          />
-                        ) : (
-                          <ReadOnlyRow
-                            key={candidate._id}
-                            candidate={candidate}
-                            onDelete={handleDelete}
-                            onEdit={handleEditClick}
-                          />
-                        )}
-                      </React.Fragment>
+                      <ReadOnlyRow
+                        key={candidate._id}
+                        candidate={candidate}
+                        onDelete={handleDelete}
+                        onEdit={handleEditClick}
+                      />
                     ))
                   ) : (
                     <tr>
@@ -189,6 +186,7 @@ const RejectedCandidates = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
