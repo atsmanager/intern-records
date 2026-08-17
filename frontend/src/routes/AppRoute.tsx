@@ -18,6 +18,7 @@ import SupportCenter from "../pages/SupportCenter";
 import CreateTicket from "../pages/CreateTicket";
 import Profile from "../pages/Profile";
 import PaymentSuccess from "../pages/PaymentSuccess";
+import Settings from "../pages/Settings";
 import Loading from "../components/Loading";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
@@ -110,10 +111,8 @@ const AppRoute = () => {
       <Route path="/payment-success" element={<PaymentSuccess />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
       <Route path="/all-users" element={<AllUsers />}></Route>
-      <Route
-        path="/rejected-candidates"
-        element={<RejectedCandidates />}
-      ></Route>
+      <Route path="/rejected-candidates" element={<RejectedCandidates />}></Route>
+      <Route path="/settings" element={<Settings />}></Route>
     </Routes>
   );
 };

@@ -131,7 +131,7 @@ const LoginPage: React.FC = () => {
       };
 
       login(user);
-      navigate("/add-candidate");
+      navigate("/all-candidate");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

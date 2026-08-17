@@ -84,6 +84,13 @@ const Navbar = () => {
           )}
           {user && (
             <li>
+              <Link to="/settings" style={{ textDecoration: "none" }} onClick={() => setIsMobileMenuOpen(false)}>
+                Settings
+              </Link>
+            </li>
+          )}
+          {user && (
+            <li>
               <button className="btn-go-premium" onClick={handleLogout}>
                 Logout
               </button>
